@@ -20,7 +20,6 @@ namespace Projekt.Controllers
             string apiUrl = "https://api.nbp.pl/api/exchangerates/rates/a/usd";
             var waluty = await _apiService.GetWalutyAsync(apiUrl);
 
-            // Dodanie waluty do bazy danych
             _context.Waluty.Add(waluty);
             await _context.SaveChangesAsync();
 

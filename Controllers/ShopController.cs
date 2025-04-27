@@ -1,5 +1,4 @@
-﻿// Controllers/ShopController.cs
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,6 @@ namespace Projekt.Controllers
                 products = products.Where(p => p.CategoryId == categoryId.Value);
             }
 
-            // Pobierz przecenione produkty (aktywne promocje)
             var currentDate = DateTime.Now;
             var discountedProducts = _context.Products
                 .Include(p => p.Category)
@@ -49,7 +47,6 @@ namespace Projekt.Controllers
             return View(products.ToList());
         }
 
-        // Nowa akcja do wyświetlania produktów z danej kategorii
         public IActionResult CategoryProducts(int categoryId)
         {
             var category = _context.Categories
@@ -82,7 +79,6 @@ namespace Projekt.Controllers
                 .FirstOrDefault(p => p.ProductId == productId);
             if (product == null) return NotFound();
 
-            // Sprawdzenie dostępności w magazynie
             if (product.Quantity < quantity)
             {
                 TempData["Error"] = $"Niewystarczająca ilość produktu {product.Name} w magazynie. Dostępne: {product.Quantity}.";
@@ -100,7 +96,6 @@ namespace Projekt.Controllers
             if (cartItem != null)
             {
                 cartItem.Quantity += quantity;
-                // Sprawdzenie, czy nowa ilość nie przekracza stanu magazynowego
                 if (product.Quantity < cartItem.Quantity)
                 {
                     TempData["Error"] = $"Niewystarczająca ilość produktu {product.Name} w magazynie. Dostępne: {product.Quantity}.";
@@ -140,7 +135,6 @@ namespace Projekt.Controllers
             {
                 if (item.Product == null)
                 {
-                    // Usuń element z koszyka, jeśli produkt nie istnieje
                     _context.CartItems.Remove(item);
                     continue;
                 }
@@ -167,7 +161,6 @@ namespace Projekt.Controllers
             var product = _context.Products.FirstOrDefault(p => p.ProductId == productId);
             if (product == null) return NotFound();
 
-            // Sprawdzenie, czy produkt już jest w ulubionych
             var existingFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == userId && f.ProductId == productId);
             if (existingFavorite == null)
             {

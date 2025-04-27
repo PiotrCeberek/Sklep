@@ -78,7 +78,6 @@ namespace Projekt.Controllers
                 };
                 order.ItemOrders.Add(itemOrder);
 
-                // Aktualizacja stanu magazynowego w Product
                 cartItem.Product.Quantity -= cartItem.Quantity;
                 _context.Update(cartItem.Product);
             }
@@ -90,19 +89,15 @@ namespace Projekt.Controllers
                 Date = DateTime.Now
             };
 
-            // Najpierw zapisujemy Order i History
             _context.Orders.Add(order);
             _context.Histories.Add(historyEntry);
             _context.CartItems.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            // Teraz, gdy Order jest zapisany, OrderId ma poprawną wartość
-            // Pobranie wszystkich pracowników
             var employees = await _context.Users
                 .Where(u => u.Role == "Employee")
                 .ToListAsync();
 
-            // Tworzenie powiadomienia dla każdego pracownika
             foreach (var employee in employees)
             {
                 var notification = new Notification
@@ -125,7 +120,6 @@ namespace Projekt.Controllers
             }
             else
             {
-                // Załaduj powiązane produkty dla ItemOrders
                 await _context.Entry(order)
                     .Collection(o => o.ItemOrders)
                     .Query()
@@ -173,7 +167,6 @@ namespace Projekt.Controllers
             return View(order);
         }
 
-        // Nowa akcja do wyświetlania historii zamówień
         public async Task<IActionResult> OrderHistory()
         {
             var userId = _userManager.GetUserId(User);
@@ -227,7 +220,7 @@ namespace Projekt.Controllers
             }
 
             order.Status = status;
-            order.LastUpdated = DateTime.Now; // Teraz to pole istnieje
+            order.LastUpdated = DateTime.Now;     
             _context.Update(order);
             await _context.SaveChangesAsync();
 

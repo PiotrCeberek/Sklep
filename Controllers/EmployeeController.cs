@@ -24,7 +24,6 @@ namespace Projekt.Controllers
             _emailService = emailService;
         }
 
-        // Lista pracowników (dla Admina)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -32,7 +31,6 @@ namespace Projekt.Controllers
             return View(employees);
         }
 
-        // Dodawanie pracownika (GET, dla Admina)
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
@@ -40,7 +38,6 @@ namespace Projekt.Controllers
             return View();
         }
 
-        // Dodawanie pracownika (POST, dla Admina)
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -78,7 +75,6 @@ namespace Projekt.Controllers
             return View(model);
         }
 
-        // Usuwanie pracownika (GET, dla Admina)
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
@@ -91,7 +87,6 @@ namespace Projekt.Controllers
             return View(user);
         }
 
-        // Usuwanie pracownika (POST, dla Admina)
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -117,14 +112,12 @@ namespace Projekt.Controllers
             return View(user);
         }
 
-        // Panel pracownika (dla Employee)
         [Authorize(Roles = "Employee")]
         public IActionResult Dashboard()
         {
             return View();
         }
 
-        // Lista powiadomień (dla Employee)
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Notifications()
         {
@@ -136,7 +129,6 @@ namespace Projekt.Controllers
             return View(notifications);
         }
 
-        // Szczegóły zamówienia do realizacji (dla Employee)
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ProcessOrder(int orderId)
         {
@@ -151,7 +143,6 @@ namespace Projekt.Controllers
                 return NotFound();
             }
 
-            // Oznacz powiadomienie jako przeczytane
             var notification = await _context.Notifications
                 .FirstOrDefaultAsync(n => n.OrderId == orderId);
             if (notification != null)
@@ -164,7 +155,6 @@ namespace Projekt.Controllers
             return View(order);
         }
 
-        // Potwierdzenie realizacji zamówienia (dla Employee)
         [Authorize(Roles = "Employee")]
         [HttpPost]
         public async Task<IActionResult> CompleteOrder(int orderId)
@@ -180,7 +170,6 @@ namespace Projekt.Controllers
                 return NotFound();
             }
 
-            // Sprawdzenie dostępności produktów (na wszelki wypadek)
             foreach (var item in order.ItemOrders)
             {
                 if (item.Product == null)
@@ -196,12 +185,10 @@ namespace Projekt.Controllers
                 }
             }
 
-            // Aktualizacja statusu zamówienia
             order.Status = "Gotowe do odbioru";
             order.LastUpdated = DateTime.Now;
             _context.Update(order);
 
-            // Wysłanie emaila do klienta
             if (!string.IsNullOrEmpty(order.User?.Email))
             {
                 string itemsList = string.Join("", order.ItemOrders.Select(item => $"<li>{item.Product.Name} - {item.Quantity} szt. - {item.Price * item.Quantity:C}</li>"));
@@ -223,7 +210,6 @@ namespace Projekt.Controllers
             return RedirectToAction(nameof(Notifications));
         }
 
-        // Zarządzanie stanem magazynowym (dla Employee)
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ManageStock()
         {
@@ -231,7 +217,6 @@ namespace Projekt.Controllers
             return View(products);
         }
 
-        // Aktualizacja stanu magazynowego (GET, dla Employee)
         [Authorize(Roles = "Employee")]
         [HttpGet]
         public async Task<IActionResult> UpdateStock(int productId)
@@ -254,7 +239,6 @@ namespace Projekt.Controllers
             return View(model);
         }
 
-        // Aktualizacja stanu magazynowego (POST, dla Employee)
         [Authorize(Roles = "Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]

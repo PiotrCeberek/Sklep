@@ -40,7 +40,6 @@ namespace Projekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Przesyłanie i zapis pliku obrazu
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(_environment.WebRootPath, "images/products");
@@ -65,7 +64,6 @@ namespace Projekt.Controllers
                 return RedirectToAction("Products");
             }
 
-            // Jeśli walidacja nie przejdzie, ponownie załaduj listę kategorii
             ViewBag.CategoryList = new SelectList(_context.Categories.ToList(), "CategoryId", "Name");
             return View(product);
         }

@@ -34,7 +34,6 @@ namespace Projekt.Controllers
 
         }
 
-        // GET: Login
         [HttpGet]
         public IActionResult Login()
         {
@@ -87,7 +86,7 @@ namespace Projekt.Controllers
                 Email = model.Email,
                 NormalizedEmail = model.Email.ToUpper(),
                 NormalizedUserName = model.Email.ToUpper(),
-                Role = "User" // Domyślnie "User", ale admin może zmienić na "Employee"
+                Role = "User"
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -117,30 +116,6 @@ namespace Projekt.Controllers
             }
             return View(model);
         }
-
-
-        //public IActionResult VerifyEmail()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> VerifyEmail(VerifyEmail model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(model.Email);
-        //        if (user == null)
-        //        {
-        //            ModelState.AddModelError("", "Podany email nie istnieje.");
-        //            return View(model);
-        //        }
-
-        //        return RedirectToAction("ChangePassword", "Account", new { username = user.UserName });
-        //    }
-
-        //    return View(model);
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -190,13 +165,11 @@ namespace Projekt.Controllers
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
-                    // Dodaj logowanie dla debugowania
                     Console.WriteLine($"Błąd zmiany hasła: {error.Description}");
                 }
             }
             else
             {
-                // Loguj błędy walidacji
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"Błąd walidacji: {error.ErrorMessage}");

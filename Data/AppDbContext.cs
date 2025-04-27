@@ -29,22 +29,18 @@ namespace Projekt.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Konfiguracja enuma dla roli użytkownika
             modelBuilder.Entity<Users>()
                 .Property(u => u.Role)
                 .HasConversion<string>();
 
-            // Konfiguracja enuma dla statusu zamówienia
             modelBuilder.Entity<Order>()
                 .Property(o => o.Status)
                 .HasConversion<string>();
 
-            // Unikalny indeks dla emaila użytkownika
             modelBuilder.Entity<Users>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Konfiguracja precyzji i skali dla właściwości typu decimal
             modelBuilder.Entity<ItemOrder>()
                 .Property(io => io.Price)
                 .HasPrecision(18, 2);
@@ -61,7 +57,6 @@ namespace Projekt.Data
                 .Property(p => p.Discount)
                 .HasPrecision(18, 2);
 
-            // Relacje
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
@@ -123,12 +118,11 @@ namespace Projekt.Data
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId);
 
-            // Nowa konfiguracja dla PasswordResetCode
             modelBuilder.Entity<PasswordResetCodeModel>()
                 .HasOne(prc => prc.User)
                 .WithMany()
                 .HasForeignKey(prc => prc.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Usunięcie kodu, gdy użytkownik zostanie usunięty
+                .OnDelete(DeleteBehavior.Cascade);       
 
             
 

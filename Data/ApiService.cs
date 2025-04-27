@@ -17,7 +17,6 @@
 
             public async Task<WalutyAPI> GetWalutyAsync(string apiUrl)
             {
-                // Pobieranie danych z API
                 var response = await _httpClient.GetStringAsync(apiUrl);
                 Console.WriteLine(response);
                 using (var reader = new StringReader(response))

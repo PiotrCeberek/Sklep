@@ -1,0 +1,16 @@
+﻿@model Projekt.Models.Users
+@{
+    ViewData["Title"] = "Usuń pracownika";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Usuń pracownika</h1>
+<h3>Czy na pewno chcesz usunąć tego pracownika?</h3>
+<div>
+    <h4>@Model.FullName (@Model.Email)</h4>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Usuń</button>
+        <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>

@@ -1,0 +1,56 @@
+﻿@{
+	ViewData["Title"] = "Index";
+}
+<div class="text-center">
+	<h1 class="display-4">
+		Welcome to the Admin Page
+	</h1>
+</div>
+<div class="row">
+	<div class="col-md-4" style="margin-bottom: 20px;">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Kategorie</h5>
+				<p class="card-text">Zarządzaj Kategoriami</p>
+				<a asp-controller="Category" asp-action="Categories" class="btn btn-primary">Przejdź</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Produkty</h5>
+				<p class="card-text">Zarządzaj Produktami</p>
+				<a asp-controller="Product" asp-action="Products" class="btn btn-primary">Przejdź</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Promocje</h5>
+				<p class="card-text">Zarządzaj Promocjami</p>
+				<a asp-controller="Promotion" asp-action="ManagePromotions" class="btn btn-primary">Przejdź</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Pracownicy</h5>
+				<p class="card-text">Zarządzaj pracownikami sklepu.</p>
+				<a asp-controller="Employee" asp-action="Index" class="btn btn-primary">Przejdź</a>
+			</div>
+		</div>
+	</div>
+	
+	<div>
+		<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back</a>
+	</div>
+</div>
+	
+
+
+
+

@@ -1,0 +1,53 @@
+﻿@model List<Projekt.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Podsumowanie Zamówienia";
+}
+
+<h1>Podsumowanie Zamówienia</h1>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Cena</th>
+                <th>Ilość</th>
+                <th>Razem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><strong>Razem</strong></td>
+                <td><strong>@Model.Sum(item => item.Price * item.Quantity).ToString("C")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-3">
+        <p>Czy na pewno chcesz złożyć to zamówienie?</p>
+        <form asp-action="CreateOrder" asp-controller="Order" method="post" class="d-inline">
+            <button type="submit" class="btn btn-success">Tak, potwierdź zamówienie</button>
+        </form>
+        <a asp-action="Index" asp-controller="Cart" class="btn btn-secondary ml-2">Nie, wróć do koszyka</a>
+    </div>
+}
+else
+{
+    <p>Twój koszyk jest pusty.</p>
+    <div class="mt-3">
+        <a asp-action="Index" asp-controller="Cart" class="btn btn-secondary">Wróć do koszyka</a>
+    </div>
+}

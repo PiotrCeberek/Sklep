@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Projekt.Models.Notification>
+@{
+    ViewData["Title"] = "Powiadomienia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var statusFilter = ViewBag.StatusFilter as bool?;
+}
+
+<h1>Powiadomienia</h1>
+@* <form asp-action="NotificationsSelect" method="get" class="mb-3">
+    <div class="form-group">
+        <label for="statusFilter">Filtruj według statusu:</label>
+        <select id="statusFilter" name="statusFilter" class="form-control">
+            @if(statusFilter == false)
+            { 
+                <option value="false" selected>Niezrelizowane</option>
+                <option value="ture">Zrealizowane</option>
+            }
+            else
+            {
+                <option value="false">Niezrelizowane</option>
+                <option value="true" selected>Zreazlizowane</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtruj</button>
+</form> *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Wiadomość</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var notification in Model)
+        {
+            <tr>
+                <td>@notification.Message</td>
+                <td>@notification.CreatedAt.ToString("g")</td>
+                <td>@(notification.IsRead ? "Zrealizowane" : "Niezralizowane")</td>
+                <td>
+                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Realizuj</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

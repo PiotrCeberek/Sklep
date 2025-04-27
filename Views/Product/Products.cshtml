@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Projekt.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(product.ImagePath))
+                        {
+                            <img src="@product.ImagePath" alt="@product.Name" style="width: 50px; height: 50px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <span>No image</span>
+                        }
+                    </td>
+                    <td>@product.Name</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.Category?.Name</td>
+                    
+                    <td>@product.Description</td>
+                    <td>
+                        <a asp-action="EditProduct" asp-route-id="@product.ProductId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No products found.</p>
+}
+
+
+<div class="mt-3">
+    <a asp-controller="Product" asp-action="CreateProduct" class="btn btn-primary">Add Product</a>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to Admin</a>
+</div>

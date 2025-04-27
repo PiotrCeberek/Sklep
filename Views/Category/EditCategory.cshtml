@@ -1,0 +1,59 @@
+﻿@model Projekt.Models.Category
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<h1>Edit Category</h1>
+
+<h4>Modify category details</h4>
+<hr />
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditCategory" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CategoryId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Current Image</label>
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div>
+                        <img src="@Model.ImagePath" alt="@Model.Name" style="width: 100px; height: 100px; object-fit: cover;" />
+                    </div>
+                }
+                else
+                {
+                    <div>No image available</div>
+                }
+            </div>
+            <div class="form-group">
+                <label for="imageFile" class="control-label">Upload New Image (optional)</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                <span class="text-danger">@Html.ValidationMessage("imageFile")</span>
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Categories" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

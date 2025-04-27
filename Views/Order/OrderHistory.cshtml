@@ -1,0 +1,84 @@
+﻿@model List<Projekt.Models.History>
+
+@{
+    ViewData["Title"] = "Historia Zamówień";
+}
+
+<h1>Historia Zamówień</h1>
+
+@if (Model.Any())
+{
+    <div class="accordion" id="orderHistoryAccordion">
+        @foreach (var history in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading_@history.HistoryId">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse_@history.HistoryId" aria-expanded="false"
+                            aria-controls="collapse_@history.HistoryId">
+                        Zamówienie #@history.OrderId | Data: @history.Date.ToString("g") | Kwota: @history.Order.Total.ToString("C") | status: @history.Order.Status
+                    </button>
+                </h2>
+                <div id="collapse_@history.HistoryId" class="accordion-collapse collapse"
+                     aria-labelledby="heading_@history.HistoryId" data-bs-parent="#orderHistoryAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Status:</strong> @history.Order.Status</p>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produkt</th>
+                                    <th>Cena</th>
+                                    <th>Ilość</th>
+                                    <th>Razem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in history.Order.ItemOrders)
+                                {
+                                    <tr>
+                                        <td>@item.Product.Name</td>
+                                        <td>@item.Price.ToString("C")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@(item.Price * item.Quantity).ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3"><strong>Razem</strong></td>
+                                    <td><strong>@history.Order.Total.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <p>Nie masz jeszcze żadnych zamówień.</p>
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Powrót</a>
+</div>
+
+<style>
+    .accordion-button {
+        font-size: 1.1rem;
+        background-color: #f8f9fa;
+    }
+
+        .accordion-button:not(.collapsed) {
+            color: #0d6efd;
+            background-color: #e7f1ff;
+        }
+
+    .accordion-body {
+        background-color: #fff;
+    }
+</style>

@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Panel pracownika";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Panel pracownika</h1>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Powiadomienia</h5>
+                <p class="card-text">Sprawdź nowe zlecenia do realizacji.</p>
+                <a asp-action="Notifications" class="btn btn-primary">Przejdź</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Stan magazynowy</h5>
+                <p class="card-text">Zarządzaj stanem magazynowym produktów.</p>
+                <a asp-action="ManageStock" class="btn btn-primary">Przejdź</a>
+            </div>
+        </div>
+    </div>
+</div>

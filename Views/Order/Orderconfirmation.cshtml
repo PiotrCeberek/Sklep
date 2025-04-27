@@ -1,0 +1,43 @@
+﻿@model Projekt.Models.Order
+
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<h1>Order Confirmation</h1>
+<p>Thank you for your order!</p>
+
+<h3>Order Details</h3>
+<p>Order ID: @Model.OrderId</p>
+<p>Date: @Model.OrderDate.ToString("g")</p>
+<p>Status: @Model.Status</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ItemOrders)
+        {
+            <tr>
+                <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Price * item.Quantity).ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td><strong>@Model.Total.ToString("C")</strong></td>
+        </tr>
+    </tfoot>
+</table>
+
+<a asp-action="Index" asp-controller="Home" class="btn btn-primary">Back to Home</a>

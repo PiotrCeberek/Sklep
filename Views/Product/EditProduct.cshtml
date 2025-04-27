@@ -1,0 +1,57 @@
+﻿@model Projekt.Models.Product
+@{
+    ViewData["Title"] = "Edytuj produkt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edytuj produkt</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "Name"))"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Quantity" class="form-label">Ilość</label>
+                <input asp-for="Quantity" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="ImagePath" class="form-label">Zdjęcie</label>
+                <input type="file" name="imageFile" class="form-control" />
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <img src="@Model.ImagePath" alt="@Model.Name" style="width: 100px; height: 100px; object-fit: cover;" />
+                }
+            </div>
+            <button type="submit" class="btn btn-primary">Zapisz</button>
+            <a asp-action="Products" class="btn btn-secondary">Anuluj</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}

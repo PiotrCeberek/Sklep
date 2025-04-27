@@ -1,0 +1,43 @@
+﻿@model Projekt.Models.Order
+@{
+    ViewData["Title"] = "Realizuj zamówienie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Realizuj zamówienie #@Model.OrderId</h1>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<div>
+    <p><strong>Klient:</strong> @Model.User?.Email</p>
+    <p><strong>Data zamówienia:</strong> @Model.OrderDate.ToString("g")</p>
+    <p><strong>Kwota całkowita:</strong> @Model.Total.ToString("C")</p>
+    <h3>Produkty w zamówieniu:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Ilość</th>
+                <th>Cena</th>
+                <th>Dostępność</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ItemOrders)
+            {
+                <tr>
+                    <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <td>@(item.Product?.Quantity ?? 0)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <form asp-action="CompleteOrder" method="post">
+        <input type="hidden" name="orderId" value="@Model.OrderId" />
+        <button type="submit" class="btn btn-success">Zakończ realizację</button>
+        <a asp-action="Notifications" class="btn btn-secondary">Wróć</a>
+    </form>
+</div>

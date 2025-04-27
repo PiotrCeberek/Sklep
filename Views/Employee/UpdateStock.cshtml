@@ -1,0 +1,32 @@
+﻿@model Projekt.Models.UpdateStock
+@{
+    ViewData["Title"] = "Aktualizuj stan magazynowy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Aktualizuj stan magazynowy</h1>
+<h3>Produkt: @(Model.ProductName ?? "Nieznany produkt")</h3>
+<p>Aktualny stan: @Model.CurrentQuantity</p>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="UpdateStock" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            <input type="hidden" asp-for="ProductName" />
+            <input type="hidden" asp-for="CurrentQuantity" />
+            <div class="form-group mb-3">
+                <label asp-for="QuantityToAdd" class="form-label">Ilość do dodania (może być ujemna):</label>
+                <input asp-for="QuantityToAdd" class="form-control" type="number" />
+                <span asp-validation-for="QuantityToAdd" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Zaktualizuj</button>
+            <a asp-action="ManageStock" class="btn btn-secondary">Anuluj</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}

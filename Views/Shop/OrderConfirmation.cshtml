@@ -1,0 +1,35 @@
+﻿@model Projekt.Models.Order
+@{
+    ViewData["Title"] = "Potwierdzenie zamówienia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Potwierdzenie zamówienia #@Model.OrderId</h1>
+<div>
+    <p><strong>Status:</strong> @Model.Status</p>
+    <p><strong>Data:</strong> @Model.OrderDate.ToString("g")</p>
+    <h3>Produkty w zamówieniu:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Ilość</th>
+                <th>Cena</th>
+                <th>Razem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ItemOrders)
+            {
+                <tr>
+                    <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p><strong>Kwota całkowita:</strong> @Model.Total.ToString("C")</p>
+    <a asp-action="Index" class="btn btn-primary">Wróć do sklepu</a>
+</div>

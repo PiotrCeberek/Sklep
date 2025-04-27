@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Projekt.Models.Product>
+@{
+    ViewData["Title"] = "Zarządzaj stanem magazynowym";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Zarządzaj stanem magazynowym</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Produkt</th>
+            <th>Aktualny stan</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@(product.Name ?? "Nieznany produkt")</td>
+                <td>@product.Quantity</td>
+                <td>
+                    <a asp-action="UpdateStock" asp-route-productId="@product.ProductId" class="btn btn-primary">Aktualizuj</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Dashboard" class="btn btn-secondary">Wróć</a>

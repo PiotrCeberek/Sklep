@@ -1,0 +1,47 @@
+﻿@model List<Projekt.Models.Product>
+@{
+    ViewData["Title"] = "Your Favorites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Your Favorites</h1>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(product.ImagePath))
+                    {
+                        <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" />
+                    }
+                    else
+                    {
+                        <img src="~/images/placeholder.jpg" class="card-img-top" alt="Brak zdjęcia" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">
+                            Price: @product.Price.ToString("C")<br />
+                            Category: @product.Category?.Name<br />
+                            Quantity: @product.Quantity<br />
+                            @product.Description
+                        </p>
+                        <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">Szczegóły</a>
+                        <a asp-action="RemoveFromFavorites" asp-route-id="@product.ProductId" class="btn btn-danger">Usuń z ulubionych</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>You have no favorite products yet.</p>
+}
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+</div>

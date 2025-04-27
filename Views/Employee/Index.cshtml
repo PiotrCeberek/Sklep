@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Projekt.Models.Users>
+@{
+    ViewData["Title"] = "Zarządzaj pracownikami";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Zarządzaj pracownikami</h1>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj nowego pracownika</a>
+    <a asp-action="Index" asp-controller="Admin" class="btn btn-primary">Back to Admin Page</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Imię i nazwisko</th>
+            <th>Email</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FullName</td>
+                <td>@employee.Email</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

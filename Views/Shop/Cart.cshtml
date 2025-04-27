@@ -1,0 +1,44 @@
+﻿@model List<Projekt.Models.CartItem>
+@{
+    ViewData["Title"] = "Koszyk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Koszyk</h1>
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Ilość</th>
+                <th>Cena</th>
+                <th>Razem</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <td>
+                        <a asp-action="RemoveFromCart" asp-controller="Shop" asp-route-id="@item.CartItemId" class="btn btn-danger">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p><strong>Całkowita kwota:</strong> @Model.Sum(item => item.Price * item.Quantity).ToString("C")</p>
+    <form asp-action="CreateOrder" asp-controller="Order" method="post">
+        <button type="submit" class="btn btn-success">Złóż zamówienie</button>
+    </form>
+}
+else
+{
+    <p>Twój koszyk jest pusty.</p>
+}
+<a asp-action="Index" asp-controller="Shop" class="btn btn-secondary mt-3">Kontynuuj zakupy</a>

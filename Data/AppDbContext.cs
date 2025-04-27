@@ -11,7 +11,6 @@ namespace Projekt.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ArticleComment> ArticleComments { get; set; }
@@ -22,7 +21,7 @@ namespace Projekt.Data
         public DbSet<History> Histories { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<PasswordResetCodeModel> PasswordResetCodes { get; set; }
-       
+        public DbSet<WalutyAPI> Waluty { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         
 

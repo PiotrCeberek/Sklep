@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Projekt.Data;
+using Projekt.Data.Projekt.Services;
 using Projekt.Models;
 using Projekt.Models.Services;
 
@@ -46,7 +47,8 @@ namespace Projekt
                 logging.AddConsole();
                 logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
             });
-
+            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<ApiService>();
             var app = builder.Build();
 
             // 6. Inicjalizacja bazy danych i dodanie domyœlnego admina

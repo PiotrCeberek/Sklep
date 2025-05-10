@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projekt.Data;
 using Projekt.Models;
+using System.Globalization;
 
 namespace Projekt.Controllers
 {
@@ -24,6 +25,13 @@ namespace Projekt.Controllers
         public IActionResult Products()
         {
             var products = _context.Products.Include(p => p.Category).ToList();
+
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             return View(products);
         }
 

@@ -36,7 +36,7 @@
                         }
                     </td>
                     <td>@product.Name</td>
-                    <td>@product.Price.ToString("C")</td>
+                    <td>@(Math.Round(product.Price * @ViewBag.Mnoznik,2)) @ViewBag.Waluta</td>
                     <td>@product.Category?.Name</td>
                     
                     <td>@product.Description</td>

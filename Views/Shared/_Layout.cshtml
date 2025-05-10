@@ -47,10 +47,26 @@
                                 <span class="badge bg-success" id="cart-count">@(ViewData["CartCount"] ?? "0")</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Waluty" asp-action="Index">Konwerter walut</a>
-                        </li>
                     </ul>
+
+                    <form asp-controller="Waluty" asp-action="Index" method="post">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @("Waluta: " + (Context.Session.GetString("WybranaWaluta") ?? "Wybierz")) <i class="bi bi-list"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="currencyDropdown">
+                                    <li><button type="submit" name="waluta" value="PLN" class="dropdown-item">PLN - Polski Złoty</button></li>
+                                    <li><button type="submit" name="waluta" value="USD" class="dropdown-item">USD - Dolar Amerykański</button></li>
+                                    <li><button type="submit" name="waluta" value="EUR" class="dropdown-item">EUR - Euro</button></li>
+                                    <li><button type="submit" name="waluta" value="GBP" class="dropdown-item">GBP - Funt Szterling</button></li>
+                                    <li><button type="submit" name="waluta" value="CHF" class="dropdown-item">CHF - Frank Szwajcarski</button></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </form>
+
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>

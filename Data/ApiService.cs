@@ -18,12 +18,16 @@
             public async Task<WalutyAPI> GetWalutyAsync(string apiUrl)
             {
                 var response = await _httpClient.GetStringAsync(apiUrl);
-                Console.WriteLine(response);
-                using (var reader = new StringReader(response))
+
+                var json = JsonConvert.DeserializeObject<dynamic>(response);
+
+                var waluty = new WalutyAPI
                 {
-                    var waluty = JsonConvert.DeserializeObject<WalutyAPI>(response);
-                    return waluty;
-                }
+                    Nazwa = json.currency,
+                    Cena = json.rates[0].mid
+                };
+                    
+                return waluty;
             }
         }
     }

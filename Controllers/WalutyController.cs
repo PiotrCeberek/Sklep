@@ -46,13 +46,6 @@ namespace Projekt.Controllers
                 HttpContext.Session.SetString("Mnoznik", "1");
             }
 
-            var products = _context.Products.ToList();
-            foreach (var product in products)
-            {
-                product.Price = product.Price * decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
-            }
-            await _context.SaveChangesAsync();
-
             return Redirect(Request.Headers["Referer"].ToString());
         }
 

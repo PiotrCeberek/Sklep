@@ -49,6 +49,12 @@ namespace Projekt.Controllers
 
         public IActionResult CategoryProducts(int categoryId)
         {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var category = _context.Categories
                 .FirstOrDefault(c => c.CategoryId == categoryId);
             if (category == null)
@@ -121,6 +127,12 @@ namespace Projekt.Controllers
 
         public IActionResult Cart()
         {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
 
@@ -181,6 +193,12 @@ namespace Projekt.Controllers
         [Authorize]
         public IActionResult Favorites()
         {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
 
@@ -200,6 +218,12 @@ namespace Projekt.Controllers
 
         public IActionResult Details(int id)
         {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var product = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Promotions)
@@ -215,8 +239,28 @@ namespace Projekt.Controllers
             return View(product);
         }
 
-        
+        [HttpGet]
+        public IActionResult RemoveFromFavorites(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var favorite = _context.Favorites
+                .FirstOrDefault(f => f.UserId == userId && f.ProductId == id);
+
+            if (favorite != null)
+            {
+                _context.Favorites.Remove(favorite);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+
     }
+
+
 }
     
 

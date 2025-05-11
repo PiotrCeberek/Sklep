@@ -23,8 +23,8 @@
                 <tr>
                     <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
                     <td>@item.Quantity</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <td>@(Math.Round(@item.Price / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
+                    <td>@(Math.Round(@item.Price * item.Quantity / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
                     <td>
                         <a asp-action="RemoveFromCart" asp-controller="Shop" asp-route-id="@item.CartItemId" class="btn btn-danger">Usuń</a>
                     </td>
@@ -32,7 +32,7 @@
             }
         </tbody>
     </table>
-    <p><strong>Całkowita kwota:</strong> @Model.Sum(item => item.Price * item.Quantity).ToString("C")</p>
+    <p><strong>Całkowita kwota:</strong> @(Math.Round(@Model.Sum(item => item.Price * item.Quantity) / ViewBag.Mnoznik, 2)) @ViewBag.Waluta </p>
     <form asp-action="CreateOrder" asp-controller="Order" method="post">
         <button type="submit" class="btn btn-success">Złóż zamówienie</button>
     </form>

@@ -29,10 +29,12 @@
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text">
-                        Price: @displayPrice.ToString("C", new System.Globalization.CultureInfo("pl-PL"))<br />
+                        Price: @(Math.Round(@displayPrice / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
                         @if (activePromotion != null)
                         {
-                            <span class="text-muted text-decoration-line-through">@product.Price.ToString("C", new System.Globalization.CultureInfo("pl-PL"))</span>
+                            <span class="text-muted text-decoration-line-through">
+                                @(Math.Round(product.Price / ViewBag.Mnoznik, 2)) @ViewBag.Waluta
+                            </span>
                             <br />
                         }
                         Category: @product.Category?.Name<br />

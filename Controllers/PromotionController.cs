@@ -41,7 +41,7 @@ namespace Projekt.Controllers
                 _context.Promotions.Add(promotion);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(ManagePromotions));
-            }
+            }   
 
             ViewBag.Products = _context.Products.ToList();
             return View(promotion);

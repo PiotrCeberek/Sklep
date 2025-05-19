@@ -175,6 +175,12 @@ namespace Projekt.Controllers
 
         public async Task<IActionResult> OrderHistory()
         {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
             {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Microsoft.OpenApi.Models;
 using Projekt.Data;
 using Projekt.Data.Projekt.Services;
 using Projekt.Models;
@@ -18,6 +19,15 @@ namespace Projekt
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDistributedMemoryCache();
+
+            //
+            builder.Services.AddControllersWithViews();
+
+            // Dodaj konfiguracjê Swaggera
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
 
             builder.Services.AddSession(options =>
             {
@@ -45,6 +55,24 @@ namespace Projekt
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient<ApiService>();
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger(); // W³¹cz Swagger
+                app.UseSwaggerUI(c =>
+                {
+                    // Zmiana œcie¿ki dla Swagger UI
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.RoutePrefix = "swagger-ui"; // Teraz Swagger UI bêdzie dostêpny pod /swagger-ui
+                });
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
+
 
             using (var scope = app.Services.CreateScope())
             {

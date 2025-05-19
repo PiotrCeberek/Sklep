@@ -23,7 +23,11 @@ namespace Projekt.Data
         public DbSet<PasswordResetCodeModel> PasswordResetCodes { get; set; }
         public DbSet<WalutyAPI> Waluty { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        
+        public DbSet<CreateProductDto> CreateProductDtos { get; set; }
+
+        public DbSet<Faktura> Faktury { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -124,13 +128,12 @@ namespace Projekt.Data
                 .HasForeignKey(prc => prc.UserId)
                 .OnDelete(DeleteBehavior.Cascade);       
 
-            
-
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Order)
                 .WithMany()
                 .HasForeignKey(n => n.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

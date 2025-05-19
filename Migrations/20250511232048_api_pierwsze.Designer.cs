@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projekt.Data;
 
@@ -11,9 +12,11 @@ using Projekt.Data;
 namespace Projekt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511232048_api_pierwsze")]
+    partial class api_pierwsze
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,28 +266,6 @@ namespace Projekt.Migrations
                     b.ToTable("CreateProductDtos");
                 });
 
-            modelBuilder.Entity("Projekt.Models.Faktura", b =>
-                {
-                    b.Property<int>("FakturaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FakturaId"));
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("FakturaId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Faktury");
-                });
-
             modelBuilder.Entity("Projekt.Models.Favorite", b =>
                 {
                     b.Property<int>("FavoriteId")
@@ -344,9 +325,6 @@ namespace Projekt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemOrderId"));
 
-                    b.Property<int?>("FakturaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
@@ -361,8 +339,6 @@ namespace Projekt.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ItemOrderId");
-
-                    b.HasIndex("FakturaId");
 
                     b.HasIndex("OrderId");
 
@@ -719,17 +695,6 @@ namespace Projekt.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Projekt.Models.Faktura", b =>
-                {
-                    b.HasOne("Projekt.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Projekt.Models.Favorite", b =>
                 {
                     b.HasOne("Projekt.Models.Product", "Product")
@@ -770,10 +735,6 @@ namespace Projekt.Migrations
 
             modelBuilder.Entity("Projekt.Models.ItemOrder", b =>
                 {
-                    b.HasOne("Projekt.Models.Faktura", null)
-                        .WithMany("Items")
-                        .HasForeignKey("FakturaId");
-
                     b.HasOne("Projekt.Models.Order", "Order")
                         .WithMany("ItemOrders")
                         .HasForeignKey("OrderId")
@@ -846,11 +807,6 @@ namespace Projekt.Migrations
             modelBuilder.Entity("Projekt.Models.Category", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Projekt.Models.Faktura", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Projekt.Models.Order", b =>

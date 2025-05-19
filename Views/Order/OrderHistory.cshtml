@@ -16,7 +16,7 @@
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapse_@history.HistoryId" aria-expanded="false"
                             aria-controls="collapse_@history.HistoryId">
-                        Zamówienie #@history.OrderId | Data: @history.Date.ToString("g") | Kwota: @history.Order.Total.ToString("C") | status: @history.Order.Status
+                        Zamówienie #@history.OrderId | Data: @history.Date.ToString("g") | Kwota: @Math.Round((history.Order.Total / @ViewBag.Mnoznik),2) @ViewBag.Waluta | status: @history.Order.Status
                     </button>
                 </h2>
                 <div id="collapse_@history.HistoryId" class="accordion-collapse collapse"
@@ -37,19 +37,26 @@
                                 {
                                     <tr>
                                         <td>@item.Product.Name</td>
-                                        <td>@item.Price.ToString("C")</td>
+                                        <td>@(Math.Round(item.Price / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</td>
                                         <td>@item.Quantity</td>
-                                        <td>@(item.Price * item.Quantity).ToString("C")</td>
+                                        <td>@(Math.Round(item.Price * item.Quantity / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td colspan="3"><strong>Razem</strong></td>
-                                    <td><strong>@history.Order.Total.ToString("C")</strong></td>
+                                    <td><strong>@(Math.Round(history.Order.Total / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</strong></td>
+
                                 </tr>
                             </tfoot>
                         </table>
+
+                        <div class="pt-2 pb-2">
+                            <div class="container">
+                                <a asp-controller="GenerateFile" asp-action="Index" class="btn btn-success btn-lg">Generuj PDF</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -54,7 +54,7 @@
 
                         <div class="pt-2 pb-2">
                             <div class="container">
-                                <a asp-controller="GenerateFile" asp-action="Index" class="btn btn-success btn-lg">Generuj PDF</a>
+                                <a asp-controller="GenerateFile" asp-action="Index" asp-route-nrZamowienia="@history.OrderId" class="btn btn-success btn-lg">Generuj PDF</a>
                             </div>
                         </div>
                     </div>

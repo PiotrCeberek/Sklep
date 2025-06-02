@@ -29,7 +29,7 @@
                 <tr>
                     <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
                     <td>@item.Quantity</td>
-                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <td>@(Math.Round(item.Price * item.Quantity / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
                     <td>@(item.Product?.Quantity ?? 0)</td>
                 </tr>
             }

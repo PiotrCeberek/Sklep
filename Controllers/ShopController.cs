@@ -44,6 +44,13 @@ namespace Projekt.Controllers
             ViewData["SelectedCategoryId"] = categoryId;
             UpdateCartCount();
             UpdateFavoritesCount();
+
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             return View(products.ToList());
         }
 
@@ -163,6 +170,24 @@ namespace Projekt.Controllers
             return View(cartWithDetails);
         }
 
+        public IActionResult AllProducts()
+        {
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
+            var products = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Promotions)
+                .ToList();
+
+            UpdateCartCount();
+            UpdateFavoritesCount();
+            return View(products);
+        }
+
         [HttpPost]
         [Authorize]
         public IActionResult AddToFavorites(int productId)
@@ -255,6 +280,26 @@ namespace Projekt.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public IActionResult RemoveFromCart(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var cartItem = _context.CartItems
+                .FirstOrDefault(c => c.UserId == userId && c.CartItemId == id); // Szukaj po CartItemId!
+
+            if (cartItem != null)
+            {
+                _context.CartItems.Remove(cartItem);
+                _context.SaveChanges();
+            }
+
+            UpdateCartCount();
+            return RedirectToAction(nameof(Cart));
+        }
+
 
 
 

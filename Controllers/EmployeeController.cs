@@ -132,6 +132,13 @@ namespace Projekt.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ProcessOrder(int orderId)
         {
+
+            string waluta = HttpContext.Session.GetString("WybranaWaluta");
+            decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
+
+            ViewBag.Mnoznik = mnoznik;
+            ViewBag.Waluta = waluta;
+
             var order = await _context.Orders
                 .Include(o => o.ItemOrders)
                     .ThenInclude(io => io.Product)

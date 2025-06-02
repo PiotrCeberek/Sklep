@@ -24,8 +24,8 @@ namespace Projekt.Data
         public DbSet<WalutyAPI> Waluty { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<CreateProductDto> CreateProductDtos { get; set; }
-
         public DbSet<Faktura> Faktury { get; set; }
+        public DbSet<Bon> Bony { get; set; }
 
 
 

@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Projekt.Models.Product>
+@using Projekt.Models
+
+@{
+    ViewData["Title"] = "Wszystkie Produkty";
+    var currentDate = DateTime.Now;
+}
+
+<div class="text-center">
+    <h1>Wszystkie Produkty</h1>
+</div>
+
+<div class="row">
+    @foreach (var product in Model)
+    {
+        var activePromotion = product.Promotions?.FirstOrDefault(p => p.StartDateTime <= currentDate && p.EndDateTime >= currentDate);
+        var displayPrice = activePromotion != null ? (product.Price * (1 - activePromotion.Discount / 100)) : product.Price;
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(product.ImagePath))
+                {
+                    <img src="@product.ImagePath" alt="@product.Name" class="card-img-top" />
+                }
+                else
+                {
+                    <div class="card-img-top placeholder-image"></div>
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text">
+                        Cena: @(Math.Round(@displayPrice / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
+                        @if (activePromotion != null)
+                        {
+                            <span class="text-muted text-decoration-line-through">
+                                @(Math.Round(product.Price / ViewBag.Mnoznik, 2)) @ViewBag.Waluta
+                            </span>
+                            <br />
+                        }
+                        Kategoria: @product.Category?.Name<br />
+                        Ilość: @product.Quantity<br />
+                        @product.Description
+                    </p>
+                    <form asp-action="AddToCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@product.ProductId" />
+                        <div class="form-group">
+                            <label>Ilość:</label>
+                            <input type="number" name="quantity" value="1" min="1" max="@product.Quantity" class="form-control w-50 d-inline" />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Dodaj do koszyka</button>
+                    </form>
+                    <form asp-action="AddToFavorites" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@product.ProductId" />
+                        <button type="submit" class="btn btn-outline-danger mt-2">
+                            <i class="bi bi-heart"></i> Dodaj do ulubionych
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Powrót do sklepu</a>
+    <a asp-action="Cart" class="btn btn-success">Zobacz koszyk</a>
+    <a asp-action="Favorites" class="btn btn-success">Zobacz ulubione</a>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="~/css/Store.css" asp-append-version="true" />
+}

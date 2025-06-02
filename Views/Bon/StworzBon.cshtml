@@ -1,0 +1,30 @@
+﻿@model List<Projekt.Models.Bon>
+
+@{
+    ViewData["Title"] = "Dodaj bon";
+}
+
+<h1>Twoje bony</h1>
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var bon in Model)
+        {
+            <div class="col-md-4">
+                <h3>@bon.Kod</h3>
+                <p>@bon.Opis</p>
+                <p>Ważny do: @bon.DataWaznosci.ToString("dd.MM.yyyy")</p>
+                <p>Pozostała ilość użyć: @bon.PozostalaIloscUzywan</p>
+                <p>Znizka: @bon.ProcentZnizki %</p>
+            </div>
+        }
+    </div>
+}
+
+
+<h1>Dodaj nowy bon</h1>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

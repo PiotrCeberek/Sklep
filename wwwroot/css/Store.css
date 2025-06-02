@@ -1,38 +1,10 @@
-﻿/* Styl dla slidera bannerów */
-.banner-slider {
-    position: relative;
-    margin-bottom: 20px;
-    width: 850px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.banner-strip {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    white-space: nowrap;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-    .banner-strip::-webkit-scrollbar {
-        display: none;
-    }
-
-.banner-image {
-    width: 850px;
-    height: 384px;
-    object-fit: cover;
-    flex-shrink: 0;
-}
-
-/* Styl dla paska kategorii */
+﻿/* Styl dla paska kategorii */
 .category-slider {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .category-strip {
@@ -40,8 +12,9 @@
     overflow-x: auto;
     scroll-behavior: smooth;
     white-space: nowrap;
-    padding: 10px 0;
     gap: 15px;
+    width: 100%;
+    padding: 10px 0;
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -54,12 +27,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
+    width: 300px;
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    transition: background-color 0.3s, transform 0.2s;
-    min-width: 150px;
+    transition: transform 0.2s, box-shadow 0.3s;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
 }
 
     .category-item:hover {
@@ -75,13 +50,11 @@
     }
 
 .category-image {
-    width: 125px;
-    height: 155px;
+    width: 180px;
+    height: 300px;
     object-fit: cover;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
-    margin-bottom: 5px;
-    transition: border-color 0.3s;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
 }
 
 .category-item:hover .category-image {
@@ -89,8 +62,8 @@
 }
 
 .category-placeholder {
-    width: 125px;
-    height: 155px;
+    width: 150px;
+    height: 180px;
     background-color: #f0f0f0;
     border: 1px solid #dee2e6;
     border-radius: 5px;
@@ -98,7 +71,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
     color: #666;
     font-weight: bold;
     transition: border-color 0.3s;
@@ -109,7 +82,7 @@
 }
 
 .category-placeholder-text {
-    font-size: 24px;
+    font-size: 28px;
     color: #666;
     font-weight: bold;
 }
@@ -146,166 +119,177 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
+    width: 300px;
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    transition: background-color 0.3s, transform 0.2s;
-    min-width: 150px;
+    transition: transform 0.2s, box-shadow 0.3s;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
 }
 
     .discount-item:hover {
-        background-color: #e9ecef;
-        border-radius: 10px;
         transform: scale(1.05);
+        box-shadow: 0 4px 12px rgb(0 123 255 / 0.3);
     }
 
 .discount-image {
-    width: 125px;
-    height: 155px;
+    width: 260px;
+    height: 300px;
     object-fit: cover;
     border-radius: 5px;
-    margin-bottom: 10px;
     border: 1px solid #dee2e6;
-    transition: border-color 0.3s;
-}
-
-.discount-item:hover .discount-image {
-    border-color: #007bff;
+    margin-bottom: 5px;
 }
 
 .discount-placeholder {
-    width: 125px;
-    height: 155px;
-    background-color: #f0f0f0;
-    border: 1px solid #dee2e6;
+    width: 150px;
+    height: 180px;
+    background-color: #e0e0e0;
     border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-    color: #666;
-}
-
-    .discount-placeholder::before {
-        content: "No image";
-    }
-
-.discount-item span {
-    font-size: 14px;
-    text-align: center;
+    margin-bottom: 5px;
 }
 
 .price-info {
-    text-align: center;
-    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
 .original-price {
-    font-size: 12px;
-    margin-right: 5px;
+    font-size: 13px;
 }
 
 .discount-price {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
 }
 
-/* Styl dla przycisków nawigacyjnych sliderów */
+/* Styl dla paska bannerów */
+.banner-slider {
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-strip {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    gap: 10px;
+    width: 100%;;
+    padding: 10px 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+    .banner-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+.banner-image {
+    width: 850px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+}
+
 .slider-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    background: none;
     border: none;
-    padding: 5px 10px;
+    font-size: 30px;
+    color: #007bff;
     cursor: pointer;
-    z-index: 1;
-    transition: background-color 0.3s;
+    padding: 0 10px;
+    user-select: none;
+    transition: color 0.3s;
 }
 
     .slider-nav:hover {
-        background-color: rgba(0, 0, 0, 0.7);
+        color: #0056b3;
     }
 
-.slider-nav-left {
-    left: 0;
+
+.text-center h1 {
+    font-size: 36px;
+    font-weight: 700;
+    background: rgb(152, 152, 102);
+    color: #fff;
+    padding: 20px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgb(160, 160, 100);
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.slider-nav-right {
-    right: 0;
+.mt-3.text-center {
+    margin-bottom: 20px; /* albo inna wartość */
+}
+.banner-container {
+    position: relative;
+    display: inline-block;
 }
 
-/* Styl dla listy produktów */
-.card {
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-    transition: box-shadow 0.3s, transform 0.2s;
+.add-to-cart-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none; /* Ukryte domyślnie */
+    z-index: 10;
 }
 
-    .card:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transform: scale(1.02);
-    }
+.banner-container:hover .add-to-cart-form {
+    display: block; /* Pokazuje przycisk po najechaniu */
+}
 
-.card-title {
-    font-size: 1.25rem;
+.banner-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: 0.3s ease;
+}
+
+.banner-container:hover .banner-image {
+    filter: brightness(0.7); /* Przyciemnia obrazek przy hoverze */
+}
+
+.add-to-cart-btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    text-decoration: none;
     color: #333;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.3s;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
 }
 
-.card-text {
-    color: #666;
+#discount-strip {
+    display: flex;
+    overflow-x: auto; /* przewijanie poziome */
+    white-space: nowrap; /* zapobiega łamaniu linii */
+    padding: 10px;
+    gap: 15px; /* odstępy między produktami */
+    max-width: 100%; /* lub ustaw szerokość jaką chcesz */
+    box-sizing: border-box;
 }
 
-/* Responsywność */
-@media (max-width: 768px) {
-    .banner-slider {
-        width: 100%;
-    }
-
-    .banner-image {
-        width: 100%;
-        height: auto;
-    }
-
-    .category-image,
-    .category-placeholder {
-        width: 100px;
-        height: 130px;
-        font-size: 20px;
-    }
-
-    .category-item {
-        min-width: 120px;
-        padding: 5px;
-    }
-
-        .category-item span {
-            font-size: 12px;
-        }
-
-    .discount-image,
-    .discount-placeholder {
-        width: 100px;
-        height: 130px;
-    }
-
-    .discount-item {
-        min-width: 120px;
-        padding: 5px;
-    }
-
-        .discount-item span {
-            font-size: 12px;
-        }
-
-    .original-price {
-        font-size: 10px;
-    }
-
-    .discount-price {
-        font-size: 12px;
-    }
+.banner-content {
+    display: inline-block;
+    flex: 0 0 auto; /* zapobiega kurczeniu się */
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MailKit.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Digests;
 using Projekt.Data;
 using Projekt.Models;
 using Projekt.Models.Email;
@@ -24,8 +26,11 @@ namespace Projekt.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder()
+        public async Task<IActionResult> CreateOrder(string BonKod)
         {
+       
+
+
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
             {
@@ -92,7 +97,11 @@ namespace Projekt.Controllers
             _context.Orders.Add(order);
             _context.Histories.Add(historyEntry);
             _context.CartItems.RemoveRange(cartItems);
+
             await _context.SaveChangesAsync();
+
+            // *** TUTAJ DODAJEMY ZAŁADOWANIE NAVIGACJI ***
+            await _context.Entry(order).Reference(o => o.User).LoadAsync();
 
             var employees = await _context.Users
                 .Where(u => u.Role == "Employee")
@@ -103,7 +112,7 @@ namespace Projekt.Controllers
                 var notification = new Notification
                 {
                     UserId = employee.Id,
-                    Message = $"Nowe zamówienie #{order.OrderId} do realizacji.",
+                    Message = $"Zamówienie #{order.OrderId}. Użytkownik: {order.User.FullName} ({order.User.Email}).",
                     CreatedAt = DateTime.Now,
                     IsRead = false,
                     Order = order
@@ -128,15 +137,15 @@ namespace Projekt.Controllers
 
                 string itemsList = string.Join("", order.ItemOrders.Select(item => $"<li>{(item.Product?.Name ?? "Nieznany produkt")} - {item.Quantity} szt. - {item.Price * item.Quantity:C}</li>"));
                 string emailBody = $@"
-            <h2>Potwierdzenie zamówienia #{order.OrderId}</h2>
-            <p>Dziękujemy za złożenie zamówienia w naszym sklepie!</p>
-            <p><strong>Status:</strong> {order.Status}</p>
-            <p><strong>Data:</strong> {order.OrderDate.ToString("g")}</p>
-            <p><strong>Produkty:</strong></p>
-            <ul>{itemsList}</ul>
-            <p><strong>Kwota całkowita:</strong> {order.Total.ToString("C")}</p>
-            <p>Szczegóły zamówienia możesz zobaczyć w swojej historii zamówień.</p>
-            <p>Pozdrawiamy,<br>Sklep Spożywczy</p>";
+    <h2>Potwierdzenie zamówienia #{order.OrderId}</h2>
+    <p>Dziękujemy za złożenie zamówienia w naszym sklepie!</p>
+    <p><strong>Status:</strong> {order.Status}</p>
+    <p><strong>Data:</strong> {order.OrderDate.ToString("g")}</p>
+    <p><strong>Produkty:</strong></p>
+    <ul>{itemsList}</ul>
+    <p><strong>Kwota całkowita:</strong> {order.Total.ToString("C")}</p>
+    <p>Szczegóły zamówienia możesz zobaczyć w swojej historii zamówień.</p>
+    <p>Pozdrawiamy,<br>Sklep Spożywczy</p>";
 
                 try
                 {
@@ -149,11 +158,28 @@ namespace Projekt.Controllers
                 }
             }
 
+            foreach (var cartItem in cartItems)
+            {
+                var tymCart = new TymCart
+                {
+                    OrderId = order.OrderId,
+                    Name = cartItem.Product.Name,
+                    Quantity = cartItem.Quantity,
+                    Price = cartItem.Price
+                };
+                _context.TymCarts.Add(tymCart);
+            }
+            await _context.SaveChangesAsync();
+
             return RedirectToAction("OrderConfirmation", new { orderId = order.OrderId });
         }
 
-        public IActionResult OrderConfirmation(int orderId)
+
+        public async Task<IActionResult> OrderConfirmation(int orderId)
         {
+
+
+
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
 

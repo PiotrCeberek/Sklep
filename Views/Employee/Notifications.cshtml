@@ -3,6 +3,10 @@
     ViewData["Title"] = "Powiadomienia";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var statusFilter = ViewBag.StatusFilter as bool?;
+
+
+    var completedNotifications = Model.Where(n => n.IsRead).ToList();
+    var notCompletedNotifications = Model.Where(n => !n.IsRead).ToList();
 }
 
 <h1>Powiadomienia</h1>
@@ -24,27 +28,61 @@
     </div>
     <button type="submit" class="btn btn-primary">Filtruj</button>
 </form> *@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Wiadomość</th>
-            <th>Data</th>
-            <th>Status</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
+
     <tbody>
-        @foreach (var notification in Model)
-        {
-            <tr>
-                <td>@notification.Message</td>
-                <td>@notification.CreatedAt.ToString("g")</td>
-                <td>@(notification.IsRead ? "Zrealizowane" : "Niezralizowane")</td>
-                <td>
-                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Realizuj</a>
-                </td>
-            </tr>
-        }
+        <div class="row">
+            <!-- Niezrealizowane -->
+            <div class="col-md-6">
+                <h3>Niezrealizowane</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Wiadomość</th>
+                            <th>Data utworzenia</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var notification in notCompletedNotifications)
+                        {
+                            <tr>
+                                <td>@notification.Message</td>
+                                <td>@notification.CreatedAt.ToString("g")</td>
+                                <td>
+                                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Realizuj</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Zrealizowane -->
+            <div class="col-md-6">
+                <h3>Zrealizowane</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Wiadomość</th>
+                            <th>Data utworzenia</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var notification in completedNotifications)
+                        {
+                            <tr>
+                                <td>@notification.Message</td>
+                                <td>@notification.CreatedAt.ToString("g")</td>
+                                <td>
+                                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Info</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </tbody>
 </table>
 

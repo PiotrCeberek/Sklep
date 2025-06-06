@@ -80,7 +80,7 @@ namespace Projekt.Controllers
             UpdateFavoritesCount();
             return View(products);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult AddToCart(int productId, int quantity = 1)
         {
@@ -134,11 +134,20 @@ namespace Projekt.Controllers
 
         public IActionResult Cart()
         {
+            string znizkaString = HttpContext.Session.GetString("Znizka");
+            decimal znizka = 0m;
+
+            if (!string.IsNullOrEmpty(znizkaString) && decimal.TryParse(znizkaString, out decimal wynik))
+            {
+                znizka = wynik / 100m; // np. 10% -> 0.10
+            }
+
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
 
             ViewBag.Mnoznik = mnoznik;
             ViewBag.Waluta = waluta;
+            ViewBag.Znizka = znizka;
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();

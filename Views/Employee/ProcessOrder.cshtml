@@ -1,4 +1,5 @@
 ﻿@model Projekt.Models.Order
+
 @{
     ViewData["Title"] = "Realizuj zamówienie";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,35 +10,53 @@
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
+
+
+@{
+    var produkty = ViewBag.TymCarts as List<Projekt.Models.TymCart>;
+}
+
+
 <div>
     <p><strong>Klient:</strong> @Model.User?.Email</p>
     <p><strong>Data zamówienia:</strong> @Model.OrderDate.ToString("g")</p>
-    <p><strong>Kwota całkowita:</strong> @Model.Total.ToString("C")</p>
+    <p><strong>Kwota całkowita: </strong>@(Math.Round(Model.Total / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</p>
     <h3>Produkty w zamówieniu:</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Produkt</th>
-                <th>Ilość</th>
-                <th>Cena</th>
-                <th>Dostępność</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.ItemOrders)
-            {
+    @if (produkty != null && produkty.Any())
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
-                    <td>@item.Quantity</td>
-                    <td>@(Math.Round(item.Price * item.Quantity / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
-                    <td>@(item.Product?.Quantity ?? 0)</td>
+                    <th>Nazwa produktu</th>
+                    <th>Ilość</th>
+                    <th>Cena</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var produkt in produkty)
+                {
+                    <tr>
+                        <td>@produkt.Name</td>
+                        <td>@produkt.Quantity</td>
+                        <td>
+                            @(Math.Round(produkt.Price * produkt.Quantity / (decimal)ViewBag.Mnoznik, 2)) @ViewBag.Waluta
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Brak produktów w zamówieniu.</p>
+    }
+
     <form asp-action="CompleteOrder" method="post">
         <input type="hidden" name="orderId" value="@Model.OrderId" />
-        <button type="submit" class="btn btn-success">Zakończ realizację</button>
+        @if (Model.Status == "Oczekujące")
+        {
+            <button type="submit" class="btn btn-success">Zakończ realizację</button>
+        }
         <a asp-action="Notifications" class="btn btn-secondary">Wróć</a>
     </form>
 </div>

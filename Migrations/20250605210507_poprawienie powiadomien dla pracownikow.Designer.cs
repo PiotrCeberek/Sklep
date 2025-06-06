@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projekt.Data;
 
@@ -11,9 +12,11 @@ using Projekt.Data;
 namespace Projekt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250605210507_poprawienie powiadomien dla pracownikow")]
+    partial class poprawieniepowiadomiendlapracownikow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,6 +173,9 @@ namespace Projekt.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DeletedProductProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -181,6 +187,8 @@ namespace Projekt.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ArticleCommentId");
+
+                    b.HasIndex("DeletedProductProductId");
 
                     b.HasIndex("ProductId");
 
@@ -201,6 +209,10 @@ namespace Projekt.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Kod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Opis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -289,6 +301,41 @@ namespace Projekt.Migrations
                     b.ToTable("CreateProductDtos");
                 });
 
+            modelBuilder.Entity("Projekt.Models.DeletedProduct", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("DeletedProducts");
+                });
+
             modelBuilder.Entity("Projekt.Models.Faktura", b =>
                 {
                     b.Property<int>("FakturaId")
@@ -319,6 +366,9 @@ namespace Projekt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavoriteId"));
 
+                    b.Property<int?>("DeletedProductProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -327,6 +377,8 @@ namespace Projekt.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FavoriteId");
+
+                    b.HasIndex("DeletedProductProductId");
 
                     b.HasIndex("ProductId");
 
@@ -370,6 +422,9 @@ namespace Projekt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemOrderId"));
 
+                    b.Property<int?>("DeletedProductProductId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FakturaId")
                         .HasColumnType("int");
 
@@ -387,6 +442,8 @@ namespace Projekt.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ItemOrderId");
+
+                    b.HasIndex("DeletedProductProductId");
 
                     b.HasIndex("FakturaId");
 
@@ -504,6 +561,9 @@ namespace Projekt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PromotionId"));
 
+                    b.Property<int?>("DeletedProductProductId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Discount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -522,38 +582,11 @@ namespace Projekt.Migrations
 
                     b.HasKey("PromotionId");
 
+                    b.HasIndex("DeletedProductProductId");
+
                     b.HasIndex("ProductId");
 
                     b.ToTable("Promotions");
-                });
-
-            modelBuilder.Entity("Projekt.Models.TymCart", b =>
-                {
-                    b.Property<int>("TymCartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TymCartId"));
-
-                    b.Property<bool>("Available")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("TymCartId");
-
-                    b.ToTable("TymCarts");
                 });
 
             modelBuilder.Entity("Projekt.Models.Users", b =>
@@ -738,6 +771,10 @@ namespace Projekt.Migrations
 
             modelBuilder.Entity("Projekt.Models.ArticleComment", b =>
                 {
+                    b.HasOne("Projekt.Models.DeletedProduct", null)
+                        .WithMany("ArticleComments")
+                        .HasForeignKey("DeletedProductProductId");
+
                     b.HasOne("Projekt.Models.Product", "Product")
                         .WithMany("ArticleComments")
                         .HasForeignKey("ProductId")
@@ -774,6 +811,17 @@ namespace Projekt.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Projekt.Models.DeletedProduct", b =>
+                {
+                    b.HasOne("Projekt.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("Projekt.Models.Faktura", b =>
                 {
                     b.HasOne("Projekt.Models.Users", "User")
@@ -787,6 +835,10 @@ namespace Projekt.Migrations
 
             modelBuilder.Entity("Projekt.Models.Favorite", b =>
                 {
+                    b.HasOne("Projekt.Models.DeletedProduct", null)
+                        .WithMany("Favorites")
+                        .HasForeignKey("DeletedProductProductId");
+
                     b.HasOne("Projekt.Models.Product", "Product")
                         .WithMany("Favorites")
                         .HasForeignKey("ProductId")
@@ -825,6 +877,10 @@ namespace Projekt.Migrations
 
             modelBuilder.Entity("Projekt.Models.ItemOrder", b =>
                 {
+                    b.HasOne("Projekt.Models.DeletedProduct", null)
+                        .WithMany("ItemOrders")
+                        .HasForeignKey("DeletedProductProductId");
+
                     b.HasOne("Projekt.Models.Faktura", null)
                         .WithMany("Items")
                         .HasForeignKey("FakturaId");
@@ -880,6 +936,10 @@ namespace Projekt.Migrations
 
             modelBuilder.Entity("Projekt.Models.Promotion", b =>
                 {
+                    b.HasOne("Projekt.Models.DeletedProduct", null)
+                        .WithMany("Promotions")
+                        .HasForeignKey("DeletedProductProductId");
+
                     b.HasOne("Projekt.Models.Product", "Product")
                         .WithMany("Promotions")
                         .HasForeignKey("ProductId");
@@ -901,6 +961,17 @@ namespace Projekt.Migrations
             modelBuilder.Entity("Projekt.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Projekt.Models.DeletedProduct", b =>
+                {
+                    b.Navigation("ArticleComments");
+
+                    b.Navigation("Favorites");
+
+                    b.Navigation("ItemOrders");
+
+                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("Projekt.Models.Faktura", b =>

@@ -1,0 +1,96 @@
+﻿@model List<Projekt.Models.Bon>
+
+<h2>Lista Bonów</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kod</th>
+                <th>Data ważności</th>
+                <th>Pozostała ilość używań</th>
+                <th>Procent zniżki</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bon in Model)
+            {
+                <tr>
+                    <td>@bon.Kod</td>
+                    <td>@bon.DataWaznosci.ToString("yyyy-MM-dd")</td>
+                    <td>@bon.PozostalaIloscUzywan</td>
+                    <td>@bon.ProcentZnizki %</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p id="timer" class="big-timer text-center mt-3">Odczekaj: 05:00</p>
+
+<div class="pt-3 text-center">
+    <a id="generateBtn" asp-controller="Bon" asp-action="GenerujBon" class="btn btn-success btn-lg disabled-link">
+        Stwórz nowy bon
+    </a>
+</div>
+
+@section Scripts {
+    <script>
+        const totalTime = 300; // 5 minut w sekundach
+        const timerElement = document.getElementById('timer');
+        const generateBtn = document.getElementById('generateBtn');
+        let startTime = localStorage.getItem('startTime');
+
+        if (!startTime) {
+            startTime = new Date().getTime();
+            localStorage.setItem('startTime', startTime);
+        }
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            let remaining = totalTime - elapsed;
+
+            if (remaining <= 0) {
+                timerElement.textContent = 'Możesz teraz wygenerować nowy bon!';
+                generateBtn.classList.remove('disabled-link');
+                generateBtn.classList.add('btn-success');
+                clearInterval(timerInterval);
+            } else {
+                let minutes = Math.floor(remaining / 60);
+                let seconds = remaining % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                timerElement.textContent = `Odczekaj: ${minutes}:${seconds}`;
+                generateBtn.classList.add('disabled-link');
+                generateBtn.classList.remove('btn-success');
+            }
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+
+        function useBon(code) {
+            alert(`Bon o kodzie ${code} został użyty!`);
+        }
+    </script>
+
+    <style>
+        .big-timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .big-button {
+            font-size: 1rem;
+            padding: 8px 16px;
+        }
+
+        /* Styl dla zablokowanego przycisku-linku */
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+}
+<br />

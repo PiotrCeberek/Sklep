@@ -20,11 +20,15 @@
         <tbody>
             @foreach (var item in Model)
             {
+                decimal cenaZNizka = item.Price * (1 - (decimal)ViewBag.Znizka);
+                decimal cenaJednostkowa = Math.Round(cenaZNizka / (decimal)ViewBag.Mnoznik, 2);
+                decimal razem = Math.Round(cenaZNizka * item.Quantity / (decimal)ViewBag.Mnoznik, 2);
+
                 <tr>
                     <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
                     <td>@item.Quantity</td>
-                    <td>@(Math.Round(@item.Price / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
-                    <td>@(Math.Round(@item.Price * item.Quantity / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
+                    <td>@cenaJednostkowa @ViewBag.Waluta</td>
+                    <td>@razem @ViewBag.Waluta</td>
                     <td>
                         <a asp-action="RemoveFromCart" asp-controller="Shop" asp-route-id="@item.CartItemId" class="btn btn-danger">Usuń</a>
                     </td>
@@ -33,6 +37,11 @@
         </tbody>
     </table>
     <p><strong>Całkowita kwota:</strong> @(Math.Round(@Model.Sum(item => item.Price * item.Quantity) / ViewBag.Mnoznik, 2)) @ViewBag.Waluta </p>
+    <form asp-action="UzyjBon" asp-controller="Bon" method="post">
+        <input type="text" name="BonKod" maxlength="3" minlength="3" required placeholder="Wpisz kod 3 znaki" />
+        <button type="submit" class="btn btn-success">Wykorzystaj bon</button>
+    </form>
+
     <form asp-action="CreateOrder" asp-controller="Order" method="post">
         <button type="submit" class="btn btn-success">Złóż zamówienie</button>
     </form>

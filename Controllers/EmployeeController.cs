@@ -16,6 +16,7 @@ namespace Projekt.Controllers
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
 
+
         public EmployeeController(UserManager<Users> userManager, RoleManager<IdentityRole> roleManager, AppDbContext context, EmailService emailService) : base(context)
         {
             _userManager = userManager;
@@ -146,18 +147,25 @@ namespace Projekt.Controllers
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
+                return NotFound();
+
+          
+
+            var notification = await _context.Notifications
+                .FirstOrDefaultAsync(n => n.OrderId == orderId);
+
+
+            var tymCarts = await _context.TymCarts
+    .Where(tc => tc.OrderId == orderId)
+    .ToListAsync();
+
+            if (!tymCarts.Any())
             {
                 return NotFound();
             }
 
-            var notification = await _context.Notifications
-                .FirstOrDefaultAsync(n => n.OrderId == orderId);
-            if (notification != null)
-            {
-                notification.IsRead = true;
-                _context.Update(notification);
-                await _context.SaveChangesAsync();
-            }
+            // Przekazujesz listę do ViewBag
+            ViewBag.TymCarts = tymCarts;
 
             return View(order);
         }
@@ -166,16 +174,23 @@ namespace Projekt.Controllers
         [HttpPost]
         public async Task<IActionResult> CompleteOrder(int orderId)
         {
+
             var order = await _context.Orders
                 .Include(o => o.ItemOrders)
                     .ThenInclude(io => io.Product)
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
+
             if (order == null)
             {
                 return NotFound();
             }
+
+
+            var notification = await _context.Notifications
+            .FirstOrDefaultAsync(n => n.OrderId == order.OrderId);
+            notification.IsRead = true;
 
             foreach (var item in order.ItemOrders)
             {
@@ -214,6 +229,8 @@ namespace Projekt.Controllers
 
             await _context.SaveChangesAsync();
             TempData["Message"] = "Zamówienie zostało zrealizowane i jest gotowe do odbioru.";
+
+
             return RedirectToAction(nameof(Notifications));
         }
 
@@ -281,6 +298,7 @@ namespace Projekt.Controllers
 
             return View(model);
         }
-        
+
+
     }
 }

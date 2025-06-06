@@ -26,6 +26,7 @@ namespace Projekt.Data
         public DbSet<CreateProductDto> CreateProductDtos { get; set; }
         public DbSet<Faktura> Faktury { get; set; }
         public DbSet<Bon> Bony { get; set; }
+        public DbSet<TymCart> TymCarts { get; set; }
 
 
 

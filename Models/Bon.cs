@@ -8,7 +8,6 @@ namespace Projekt.Models
         [Key]
         public int Id { get; set; }
         public string Kod { get; set; }
-        public string Opis { get; set; }
         public DateTime DataWaznosci { get; set; }
         public int PozostalaIloscUzywan { get; set; }
         public double ProcentZnizki { get; set; }

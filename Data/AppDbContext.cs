@@ -135,6 +135,13 @@ namespace Projekt.Data
                 .HasForeignKey(n => n.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Bon>()
+                .HasOne(b => b.User)
+                .WithMany() // brak kolekcji w Users
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 }

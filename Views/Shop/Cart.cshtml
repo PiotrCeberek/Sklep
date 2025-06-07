@@ -24,10 +24,19 @@
                 decimal cenaJednostkowa = Math.Round(cenaZNizka / (decimal)ViewBag.Mnoznik, 2);
                 decimal razem = Math.Round(cenaZNizka * item.Quantity / (decimal)ViewBag.Mnoznik, 2);
 
+                decimal staraCena = Math.Round(item.Price / (decimal)ViewBag.Mnoznik, 2);
+
                 <tr>
                     <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
                     <td>@item.Quantity</td>
-                    <td>@cenaJednostkowa @ViewBag.Waluta</td>
+                    <td>
+                        @if (ViewBag.Znizka != 0m)
+                        {
+                            <span style="text-decoration: line-through; color: red;">@staraCena @ViewBag.Waluta</span>
+                            <br />
+                        }
+                        <span>@cenaJednostkowa @ViewBag.Waluta</span>
+                    </td>
                     <td>@razem @ViewBag.Waluta</td>
                     <td>
                         <a asp-action="RemoveFromCart" asp-controller="Shop" asp-route-id="@item.CartItemId" class="btn btn-danger">Usuń</a>
@@ -35,16 +44,51 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            @{
+                decimal calkowitaKwota = 0m;
+                foreach (var item in Model)
+                {
+                    decimal cenaZNizka = item.Price * (1 - (decimal)ViewBag.Znizka);
+                    decimal razem = Math.Round(cenaZNizka * item.Quantity / (decimal)ViewBag.Mnoznik, 2);
+                    calkowitaKwota += razem;
+                }
+            }
+            <tr>
+                <td colspan="5" style="text-align: left; font-weight: bold; font-size: 1.5rem;">
+                    Całkowita kwota: <span style="margin-left: 10px;">@calkowitaKwota @ViewBag.Waluta</span>
+                </td>
+            </tr>
+        </tfoot>
     </table>
-    <p><strong>Całkowita kwota:</strong> @(Math.Round(@Model.Sum(item => item.Price * item.Quantity) / ViewBag.Mnoznik, 2)) @ViewBag.Waluta </p>
-    <form asp-action="UzyjBon" asp-controller="Bon" method="post">
-        <input type="text" name="BonKod" maxlength="3" minlength="3" required placeholder="Wpisz kod 3 znaki" />
-        <button type="submit" class="btn btn-success">Wykorzystaj bon</button>
-    </form>
 
+
+    @if (Context.Session.GetString("BonKod") == null)
+    {
+        <form asp-action="UzyjBon" asp-controller="Bon" method="post">
+            <input type="text" name="BonKod" maxlength="3" minlength="3" required placeholder="Wpisz kod 3 znaki" />
+            <button type="submit" class="btn btn-success">Wykorzystaj bon</button>
+        </form>
+    }
+    else
+    {
+        <form asp-action="AnulujBon" asp-controller="Bon" method="post">
+            <button type="submit" class="btn btn-warning">
+                Anuluj bon: @Context.Session.GetString("BonKod")
+            </button>
+        </form>
+    }
+    <br />
     <form asp-action="CreateOrder" asp-controller="Order" method="post">
+        @if (Context.Session.GetString("BonKod") != null)
+        {
+            <input type="hidden" name="BonKod" value="@Context.Session.GetString("BonKod")" />
+        }
         <button type="submit" class="btn btn-success">Złóż zamówienie</button>
     </form>
+
+
+
 }
 else
 {

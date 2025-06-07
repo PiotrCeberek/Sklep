@@ -2,52 +2,73 @@
 
 @{
     ViewData["Title"] = "Historia Zamówień";
+    var produkty = ViewBag.TymCarts as List<Projekt.Models.TymCart>;
+    var znizki = ViewBag.Znizki as Dictionary<int, double> ?? new Dictionary<int, double>();
 }
 
 <h1>Historia Zamówień</h1>
+
 
 @if (Model.Any())
 {
     <div class="accordion" id="orderHistoryAccordion">
         @foreach (var history in Model)
         {
+            double znizka = 0;
+            if (znizki.ContainsKey(history.OrderId))
+            {
+                znizka = znizki[history.OrderId];
+            }
+            decimal discountFactor = 1 - (decimal)znizka / 100;
+
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading_@history.HistoryId">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapse_@history.HistoryId" aria-expanded="false"
                             aria-controls="collapse_@history.HistoryId">
-                        Zamówienie #@history.OrderId | Data: @history.Date.ToString("g") | Kwota: @Math.Round((history.Order.Total / @ViewBag.Mnoznik),2) @ViewBag.Waluta | status: @history.Order.Status
+                        Zamówienie #@history.OrderId | Data: @history.Date.ToString("g") |
+                        Kwota: @Math.Round((history.Order.Total / ViewBag.Mnoznik) * discountFactor, 2) @ViewBag.Waluta |
+                        Status: @history.Order.Status | Zniżka: @znizka%
                     </button>
                 </h2>
                 <div id="collapse_@history.HistoryId" class="accordion-collapse collapse"
                      aria-labelledby="heading_@history.HistoryId" data-bs-parent="#orderHistoryAccordion">
                     <div class="accordion-body">
                         <p><strong>Status:</strong> @history.Order.Status</p>
+                        <p><strong>Zniżka:</strong> @znizka %</p>
+
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Produkt</th>
-                                    <th>Cena</th>
+                                    <th>Cena (za szt.)</th>
                                     <th>Ilość</th>
                                     <th>Razem</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in history.Order.ItemOrders)
+
+                                @{
+                                    var produktyZamowienia = produkty?.Where(p => p.OrderId == history.OrderId).ToList();
+                                }
+
+                                @foreach (var p in produktyZamowienia)
                                 {
+                                    decimal cenaPoZnizce = (p.Price / ViewBag.Mnoznik) * discountFactor;
+                                    decimal razem = cenaPoZnizce * p.Quantity;
+
                                     <tr>
-                                        <td>@item.Product.Name</td>
-                                        <td>@(Math.Round(item.Price / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@(Math.Round(item.Price * item.Quantity / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</td>
+                                        <td>@p.Name</td>
+                                        <td>@Math.Round(cenaPoZnizce, 2) @ViewBag.Waluta</td>
+                                        <td>@p.Quantity</td>
+                                        <td>@Math.Round(razem, 2) @ViewBag.Waluta</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="3"><strong>Razem</strong></td>
-                                    <td><strong>@(Math.Round(history.Order.Total / ViewBag.Mnoznik, 2) + " " + ViewBag.Waluta)</strong></td>
-
+                                    <td colspan="3"><strong>Razem po zniżce</strong></td>
+                                    <td><strong>@Math.Round((history.Order.Total / ViewBag.Mnoznik) * discountFactor, 2) @ViewBag.Waluta</strong></td>
                                 </tr>
                             </tfoot>
                         </table>

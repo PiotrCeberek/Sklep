@@ -1,5 +1,4 @@
-﻿/* Styl dla paska kategorii */
-.category-slider {
+﻿.category-slider {
     position: relative;
     margin-bottom: 30px;
     display: flex;
@@ -92,7 +91,6 @@
     text-align: center;
 }
 
-/* Styl dla paska przecenionych produktów */
 .discount-slider {
     position: relative;
     margin-bottom: 20px;
@@ -167,7 +165,6 @@
     font-weight: bold;
 }
 
-/* Styl dla paska bannerów */
 .banner-slider {
     position: relative;
     margin-bottom: 30px;
@@ -229,7 +226,7 @@
 }
 
 .mt-3.text-center {
-    margin-bottom: 20px; /* albo inna wartość */
+    margin-bottom: 20px;
 }
 .banner-container {
     position: relative;
@@ -241,12 +238,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: none; /* Ukryte domyślnie */
+    display: none;
     z-index: 10;
 }
 
 .banner-container:hover .add-to-cart-form {
-    display: block; /* Pokazuje przycisk po najechaniu */
+    display: block;
 }
 
 .banner-image {
@@ -257,7 +254,7 @@
 }
 
 .banner-container:hover .banner-image {
-    filter: brightness(0.7); /* Przyciemnia obrazek przy hoverze */
+    filter: brightness(0.7);
 }
 
 .add-to-cart-btn {
@@ -281,15 +278,15 @@
 
 #discount-strip {
     display: flex;
-    overflow-x: auto; /* przewijanie poziome */
-    white-space: nowrap; /* zapobiega łamaniu linii */
+    overflow-x: auto;
+    white-space: nowrap;
     padding: 10px;
-    gap: 15px; /* odstępy między produktami */
-    max-width: 100%; /* lub ustaw szerokość jaką chcesz */
+    gap: 15px;
+    max-width: 100%;
     box-sizing: border-box;
 }
 
 .banner-content {
     display: inline-block;
-    flex: 0 0 auto; /* zapobiega kurczeniu się */
+    flex: 0 0 auto;
 }

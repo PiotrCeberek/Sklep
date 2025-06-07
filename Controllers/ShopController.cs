@@ -132,6 +132,7 @@ namespace Projekt.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
         public IActionResult Cart()
         {
             string znizkaString = HttpContext.Session.GetString("Znizka");
@@ -140,7 +141,10 @@ namespace Projekt.Controllers
             if (!string.IsNullOrEmpty(znizkaString) && decimal.TryParse(znizkaString, out decimal wynik))
             {
                 znizka = wynik / 100m; // np. 10% -> 0.10
+
+
             }
+
 
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));

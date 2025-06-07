@@ -28,8 +28,9 @@ namespace Projekt.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder(string BonKod)
         {
-       
-
+            // Usuwamy ewentualnie stary BonKod z sesji
+            HttpContext.Session.SetString("Znizka", "0");
+            HttpContext.Session.Remove("BonKod");
 
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
@@ -100,7 +101,9 @@ namespace Projekt.Controllers
 
             await _context.SaveChangesAsync();
 
-            // *** TUTAJ DODAJEMY ZAŁADOWANIE NAVIGACJI ***
+
+
+            // Załaduj nawigację (User)
             await _context.Entry(order).Reference(o => o.User).LoadAsync();
 
             var employees = await _context.Users
@@ -137,15 +140,15 @@ namespace Projekt.Controllers
 
                 string itemsList = string.Join("", order.ItemOrders.Select(item => $"<li>{(item.Product?.Name ?? "Nieznany produkt")} - {item.Quantity} szt. - {item.Price * item.Quantity:C}</li>"));
                 string emailBody = $@"
-    <h2>Potwierdzenie zamówienia #{order.OrderId}</h2>
-    <p>Dziękujemy za złożenie zamówienia w naszym sklepie!</p>
-    <p><strong>Status:</strong> {order.Status}</p>
-    <p><strong>Data:</strong> {order.OrderDate.ToString("g")}</p>
-    <p><strong>Produkty:</strong></p>
-    <ul>{itemsList}</ul>
-    <p><strong>Kwota całkowita:</strong> {order.Total.ToString("C")}</p>
-    <p>Szczegóły zamówienia możesz zobaczyć w swojej historii zamówień.</p>
-    <p>Pozdrawiamy,<br>Sklep Spożywczy</p>";
+<h2>Potwierdzenie zamówienia #{order.OrderId}</h2>
+<p>Dziękujemy za złożenie zamówienia w naszym sklepie!</p>
+<p><strong>Status:</strong> {order.Status}</p>
+<p><strong>Data:</strong> {order.OrderDate:g}</p>
+<p><strong>Produkty:</strong></p>
+<ul>{itemsList}</ul>
+<p><strong>Kwota całkowita:</strong> {order.Total:C}</p>
+<p>Szczegóły zamówienia możesz zobaczyć w swojej historii zamówień.</p>
+<p>Pozdrawiamy,<br>Sklep Spożywczy</p>";
 
                 try
                 {
@@ -171,33 +174,57 @@ namespace Projekt.Controllers
             }
             await _context.SaveChangesAsync();
 
+            Console.WriteLine("11111\n\n\n\n\n");
+            // *** TUTAJ DODAJEMY OBSŁUGĘ BONU ***
+            if (!string.IsNullOrEmpty(BonKod))
+            {
+                Console.WriteLine("probuj1\n\n\n\n\n");
+                var bon = await _context.Bony.FirstOrDefaultAsync(b => b.Kod == BonKod);
+                if (bon != null)
+                    Console.WriteLine("probuje2\n\n\n\n\n");
+                {
+                    double znizkaProcent = bon.ProcentZnizki;
+                    HttpContext.Session.SetString($"Ulga{order.OrderId}", znizkaProcent.ToString());
+                    Console.WriteLine($"Zniżka {znizkaProcent}% zapisana do sesji pod kluczem Ulga{order.OrderId}\n\n\n\n");
+                }
+            }
+
             return RedirectToAction("OrderConfirmation", new { orderId = order.OrderId });
         }
 
 
+
         public async Task<IActionResult> OrderConfirmation(int orderId)
         {
-
-
-
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
 
             ViewBag.Mnoznik = mnoznik;
             ViewBag.Waluta = waluta;
 
-            var order = _context.Orders
+            var order = await _context.Orders
                 .Include(o => o.ItemOrders)
                     .ThenInclude(io => io.Product)
-                .FirstOrDefault(o => o.OrderId == orderId);
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
             {
                 return NotFound();
             }
 
+            // Odczyt ulgi ze session (klucz "Ulga{orderId}")
+            string znizkaString = HttpContext.Session.GetString($"Ulga{orderId}");
+            decimal znizka = 0m;
+            if (!string.IsNullOrEmpty(znizkaString))
+            {
+                decimal.TryParse(znizkaString, out znizka);
+            }
+
+            ViewBag.UlgaProcent = znizka;
+
             return View(order);
         }
+
 
         public async Task<IActionResult> OrderHistory()
         {
@@ -221,8 +248,35 @@ namespace Projekt.Controllers
                 .OrderByDescending(h => h.Date)
                 .ToListAsync();
 
+            var tymCarts = await _context.TymCarts.ToListAsync();
+
+            if (!tymCarts.Any())
+            {
+                return NotFound();
+            }
+
+            ViewBag.TymCarts = tymCarts;
+
+            // Dodanie słownika zniżek
+            var znizki = new Dictionary<int, double>();
+            foreach (var h in history)
+            {
+                var ulgaString = HttpContext.Session.GetString($"Ulga{h.OrderId}");
+                if (!string.IsNullOrEmpty(ulgaString) && double.TryParse(ulgaString, out double znizka))
+                {
+                    znizki[h.OrderId] = znizka;
+                }
+                else
+                {
+                    znizki[h.OrderId] = 0;
+                }
+            }
+            ViewBag.Znizki = znizki;
+
             return View(history);
         }
+
+
         public async Task<IActionResult> OrderSummary()
         {
             var userId = _userManager.GetUserId(User);
@@ -234,7 +288,6 @@ namespace Projekt.Controllers
             var cartItems = await _context.CartItems
                 .Where(ci => ci.UserId == userId)
                 .Include(ci => ci.Product)
-              
                 .ToListAsync();
 
             if (!cartItems.Any())
@@ -243,8 +296,30 @@ namespace Projekt.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
+            // Pobranie zniżki z Session (domyślnie 0%)
+            var znizkaStr = HttpContext.Session.GetString("Znizka");
+            decimal znizka = 0;
+            if (!string.IsNullOrEmpty(znizkaStr))
+            {
+                decimal.TryParse(znizkaStr, out znizka);
+            }
+
+            // Oblicz tymczasowe kwoty po zastosowaniu zniżki
+            var cartItemsWithDiscount = cartItems.Select(ci => new
+            {
+                Produkt = ci.Product,
+                Ilosc = ci.Quantity,
+                Cena = ci.Price,
+                CenaPoZnizce = ci.Price * (1 - znizka / 100),
+                WartoscPoZnizce = ci.Price * (1 - znizka / 100) * ci.Quantity
+            }).ToList();
+
+            ViewBag.CartItemsWithDiscount = cartItemsWithDiscount;
+            ViewBag.Znizka = znizka;
+
             return View(cartItems);
         }
+
         [Authorize(Roles = "Employee,Admin")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, string status)
         {

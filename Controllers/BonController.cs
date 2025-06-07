@@ -1,19 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Projekt.Data;
 using Projekt.Models;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace Projekt.Controllers
 {
     public class BonController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<Users> _userManager;
 
-        public BonController(AppDbContext context)
+        public BonController(AppDbContext context, UserManager<Users> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public IActionResult GenerujBon()
         {
+            var userId = _userManager.GetUserId(User);
             var random = new Random();
 
             string GenerateCode(int length = 3)
@@ -32,7 +38,8 @@ namespace Projekt.Controllers
                 Kod = GenerateCode(),
                 DataWaznosci = expirationDate,
                 PozostalaIloscUzywan = remainingUses,
-                ProcentZnizki = discountPercent
+                ProcentZnizki = discountPercent,
+                UserId = userId
             };
 
             _context.Bony.Add(bon);
@@ -44,12 +51,36 @@ namespace Projekt.Controllers
         [HttpGet]
         public IActionResult PokazBony()
         {
-            var bony = _context.Bony.ToList();
+            var userId = _userManager.GetUserId(User);
+
+            var bony_u = _context.Bony.Where(b => b.PozostalaIloscUzywan == 0).ToList();
+            if (bony_u.Any())
+            {
+                _context.Bony.RemoveRange(bony_u);
+                _context.SaveChanges();
+            }
+
+            var bony = _context.Bony
+                .Where(b => b.UserId == userId)
+                .ToList();
+
+            ViewBag.UserId = userId;            // <-- dodaj to
+            ViewBag.TimerSeconds = 300;         // <-- 5 minut w sekundach
+
             return View(bony);
         }
 
         public IActionResult UzyjBon(string BonKod)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var bonyDoUsuniecia = _context.Bony.Where(b => b.PozostalaIloscUzywan == 0).ToList();
+            if (bonyDoUsuniecia.Any())
+            {
+                _context.Bony.RemoveRange(bonyDoUsuniecia);
+                _context.SaveChanges();
+            }
+
             var bon = _context.Bony.FirstOrDefault(b => b.Kod == BonKod);
 
             if (bon == null)
@@ -59,25 +90,51 @@ namespace Projekt.Controllers
                 return RedirectToAction("Cart", "Shop");
             }
 
+            if (bon.UserId != userId)
+            {
+                TempData["Message"] = "Ten bon nie należy do Ciebie!";
+                HttpContext.Session.SetString("Znizka", "0");
+                return RedirectToAction("Cart", "Shop");
+            }
+
             if (bon.PozostalaIloscUzywan <= 0)
             {
                 TempData["Message"] = "Ten bon został już wykorzystany!";
                 HttpContext.Session.SetString("Znizka", "0");
                 return RedirectToAction("Cart", "Shop");
-
             }
 
             bon.PozostalaIloscUzywan--;
             _context.SaveChanges();
 
-            var znizka = bon.ProcentZnizki;
             HttpContext.Session.SetString("Znizka", bon.ProcentZnizki.ToString());
+            HttpContext.Session.SetString("BonKod", BonKod);
 
-            TempData["Message"] = $"Bon {BonKod} został użyty! Pozostała liczba użyć: {bon.PozostalaIloscUzywan}";
+            TempData["Info"] = $"Bon {BonKod} zastosowany";
             return RedirectToAction("Cart", "Shop");
         }
+        public IActionResult AnulujBon()
+        {
+            var bonKod = HttpContext.Session.GetString("BonKod");
 
+            if (!string.IsNullOrEmpty(bonKod))
+            {
+                var bon = _context.Bony.FirstOrDefault(b => b.Kod == bonKod);
 
+                if (bon != null)
+                {
+                    bon.PozostalaIloscUzywan++;
+                    _context.SaveChanges();
+                }
+
+                HttpContext.Session.Remove("Znizka");
+                HttpContext.Session.Remove("BonKod");
+
+                TempData["Message"] = "Bon został anulowany.";
+            }
+
+            return RedirectToAction("Cart", "Shop");
+        }
 
 
     }

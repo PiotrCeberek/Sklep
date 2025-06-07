@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Order Confirmation";
+
+    decimal znizkaProcent = ViewBag.UlgaProcent != null ? (decimal)ViewBag.UlgaProcent : 0m;
+    decimal mnoznik = ViewBag.Mnoznik != null ? (decimal)ViewBag.Mnoznik : 1m;
+    string waluta = ViewBag.Waluta ?? "";
+    decimal totalPoZnizce = Model.Total * (1 - znizkaProcent / 100);
 }
 
 <h1>Order Confirmation</h1>
@@ -12,30 +17,38 @@
 <p>Date: @Model.OrderDate.ToString("g")</p>
 <p>Status: @Model.Status</p>
 
+@if (znizkaProcent > 0)
+{
+    <p><strong>Ulga:</strong> @znizkaProcent %</p>
+}
+
 <table class="table">
     <thead>
         <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
+            <th>Produkt</th>
+            <th>Cena</th>
+            <th>Ilość</th>
+            <th>Razem</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.ItemOrders)
         {
+            var cenaPoZnizce = item.Price * (1 - znizkaProcent / 100);
+            var razemPoZnizce = cenaPoZnizce * item.Quantity;
             <tr>
                 <td>@(item.Product?.Name ?? "Produkt usunięty")</td>
-                <td>@(Math.Round(item.Price / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br /></td>
+                <td>@Math.Round(cenaPoZnizce / mnoznik, 2) @waluta</td>
                 <td>@item.Quantity</td>
-                <td>@(Math.Round(item.Price * item.Quantity / ViewBag.Mnoznik, 2)) @ViewBag.Waluta</td>
+                <td>@Math.Round(razemPoZnizce / mnoznik, 2) @waluta</td>
             </tr>
         }
     </tbody>
+
     <tfoot>
         <tr>
-            <td colspan="3"><strong>Total</strong></td>
-            <td><strong>@(Math.Round(@Model.Total / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</strong></td>
+            <td colspan="3"><strong>Całkowita wartość zamówienia</strong></td>
+            <td><strong>@Math.Round(totalPoZnizce / mnoznik, 2) @waluta</strong></td>
         </tr>
     </tfoot>
 </table>

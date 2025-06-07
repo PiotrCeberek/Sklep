@@ -133,7 +133,6 @@ namespace Projekt.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ProcessOrder(int orderId)
         {
-
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
 
@@ -149,26 +148,32 @@ namespace Projekt.Controllers
             if (order == null)
                 return NotFound();
 
-          
-
             var notification = await _context.Notifications
                 .FirstOrDefaultAsync(n => n.OrderId == orderId);
 
-
             var tymCarts = await _context.TymCarts
-    .Where(tc => tc.OrderId == orderId)
-    .ToListAsync();
+                .Where(tc => tc.OrderId == orderId)
+                .ToListAsync();
 
             if (!tymCarts.Any())
             {
                 return NotFound();
             }
 
-            // Przekazujesz listę do ViewBag
             ViewBag.TymCarts = tymCarts;
+
+            // Pobranie ulgi (zniżki) z sesji
+            var ulgaString = HttpContext.Session.GetString($"Ulga{order.OrderId}");
+            double znizkaProcent = 0;
+            if (!string.IsNullOrEmpty(ulgaString) && double.TryParse(ulgaString, out double parsedZnizka))
+            {
+                znizkaProcent = parsedZnizka;
+            }
+            ViewBag.ZnizkaProcent = znizkaProcent;
 
             return View(order);
         }
+
 
         [Authorize(Roles = "Employee")]
         [HttpPost]

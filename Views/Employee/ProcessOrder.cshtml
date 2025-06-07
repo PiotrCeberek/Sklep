@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Realizuj zamówienie";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    double znizkaProcent = ViewBag.ZnizkaProcent ?? 0;
+    decimal mnoznik = (decimal)ViewBag.Mnoznik;
+    string waluta = ViewBag.Waluta;
 }
 
 <h1>Realizuj zamówienie #@Model.OrderId</h1>
@@ -11,16 +15,29 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
+@if (znizkaProcent > 0)
+{
+    <div class="alert alert-info">
+        Obowiązuje zniżka: <strong>@znizkaProcent%</strong>
+    </div>
+}
 
 @{
     var produkty = ViewBag.TymCarts as List<Projekt.Models.TymCart>;
 }
 
-
 <div>
     <p><strong>Klient:</strong> @Model.User?.Email</p>
     <p><strong>Data zamówienia:</strong> @Model.OrderDate.ToString("g")</p>
-    <p><strong>Kwota całkowita: </strong>@(Math.Round(Model.Total / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta</p>
+
+    <p><strong>Kwota całkowita przed zniżką: </strong>@(Math.Round(Model.Total / mnoznik, 2)) @waluta</p>
+
+    @if (znizkaProcent > 0)
+    {
+        var kwotaPoZnizce = Model.Total * (decimal)(1 - znizkaProcent / 100);
+        <p><strong>Kwota po zniżce: </strong>@(Math.Round(kwotaPoZnizce / mnoznik, 2)) @waluta</p>
+    }
+
     <h3>Produkty w zamówieniu:</h3>
     @if (produkty != null && produkty.Any())
     {
@@ -29,18 +46,18 @@
                 <tr>
                     <th>Nazwa produktu</th>
                     <th>Ilość</th>
-                    <th>Cena</th>
+                    <th>Cena po zniżce</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var produkt in produkty)
                 {
+                    var cenaPrzedZnizka = produkt.Price * produkt.Quantity;
+                    var cenaPoZnizce = cenaPrzedZnizka * (decimal)(1 - znizkaProcent / 100);
                     <tr>
                         <td>@produkt.Name</td>
                         <td>@produkt.Quantity</td>
-                        <td>
-                            @(Math.Round(produkt.Price * produkt.Quantity / (decimal)ViewBag.Mnoznik, 2)) @ViewBag.Waluta
-                        </td>
+                        <td>@(Math.Round(cenaPoZnizce / mnoznik, 2)) @waluta</td>
                     </tr>
                 }
             </tbody>

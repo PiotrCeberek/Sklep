@@ -36,14 +36,18 @@
 
 @section Scripts {
     <script>
-        const totalTime = 300; // 5 minut w sekundach
+        const totalTime = @ViewBag.TimerSeconds; // 300 sekund = 5 minut
         const timerElement = document.getElementById('timer');
         const generateBtn = document.getElementById('generateBtn');
-        let startTime = localStorage.getItem('startTime');
+
+        const userKey = '@ViewBag.UserId';
+        const storageKey = `bonStartTime_${userKey}`;
+
+        let startTime = localStorage.getItem(storageKey);
 
         if (!startTime) {
             startTime = new Date().getTime();
-            localStorage.setItem('startTime', startTime);
+            localStorage.setItem(storageKey, startTime);
         }
 
         function updateTimer() {
@@ -69,10 +73,14 @@
         const timerInterval = setInterval(updateTimer, 1000);
         updateTimer();
 
-        function useBon(code) {
-            alert(`Bon o kodzie ${code} został użyty!`);
-        }
+        generateBtn.addEventListener('click', () => {
+            const now = new Date().getTime();
+            localStorage.setItem(storageKey, now);
+            startTime = now;
+            updateTimer();
+        });
     </script>
+}
 
     <style>
         .big-timer {
@@ -92,5 +100,3 @@
             opacity: 0.5;
         }
     </style>
-}
-<br />

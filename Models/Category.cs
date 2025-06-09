@@ -6,9 +6,12 @@ namespace Projekt.Models
     {
         [Key]
         public int CategoryId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Nazwa kategorii jest wymagana.")]
         public string Name { get; set; }
+
         public string? ImagePath { get; set; }
+
         public ICollection<Product>? Products { get; set; }
     }
 }

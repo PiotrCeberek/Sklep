@@ -9,12 +9,12 @@
     decimal totalPoZnizce = Model.Total * (1 - znizkaProcent / 100);
 }
 
-<h1>Order Confirmation</h1>
-<p>Thank you for your order!</p>
+<h1>Podsumowanie zamówienia</h1>
+<p>Dziękujemy za Twoje zamówienie!</p>
 
-<h3>Order Details</h3>
-<p>Order ID: @Model.OrderId</p>
-<p>Date: @Model.OrderDate.ToString("g")</p>
+<h3>Szczegóły zamówienia</h3>
+<p>Nr zamówienia: #@Model.OrderId</p>
+<p>Data: @Model.OrderDate.ToString("g")</p>
 <p>Status: @Model.Status</p>
 
 @if (znizkaProcent > 0)
@@ -53,4 +53,4 @@
     </tfoot>
 </table>
 
-<a asp-action="Index" asp-controller="Home" class="btn btn-primary">Back to Home</a>
+<a asp-action="Index" asp-controller="Home" class="btn btn-primary">Powrót do strony głównej</a>

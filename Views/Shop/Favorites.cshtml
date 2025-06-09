@@ -1,10 +1,10 @@
 ﻿@model List<Projekt.Models.Product>
 @{
-    ViewData["Title"] = "Your Favorites";
+    ViewData["Title"] = "Twoje ulubione";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Your Favorites</h1>
+<h1>Twoje ulubione</h1>
 
 @if (Model.Any())
 {
@@ -24,9 +24,9 @@
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">
-                            Price: @(Math.Round(@product.Price / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
-                            Category: @product.Category?.Name<br />
-                            Quantity: @product.Quantity<br />
+                            Cena: @(Math.Round(@product.Price / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
+                            Kategoria: @product.Category?.Name<br />
+                            Ilość: @product.Quantity<br />
                             @product.Description
                         </p>
                         <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">Szczegóły</a>
@@ -39,9 +39,9 @@
 }
 else
 {
-    <p>You have no favorite products yet.</p>
+    <p>Brak ulubionych.</p>
 }
 
 <div class="mt-3">
-    <a asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+    <a asp-action="Index" class="btn btn-secondary">Kontynuuj zakupy</a>
 </div>

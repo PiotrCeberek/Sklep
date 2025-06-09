@@ -36,7 +36,7 @@
 
 @section Scripts {
     <script>
-        const totalTime = @ViewBag.TimerSeconds; // 300 sekund = 5 minut
+        const totalTime = @ViewBag.TimerSeconds;
         const timerElement = document.getElementById('timer');
         const generateBtn = document.getElementById('generateBtn');
 
@@ -93,8 +93,6 @@
             font-size: 1rem;
             padding: 8px 16px;
         }
-
-        /* Styl dla zablokowanego przycisku-linku */
         .disabled-link {
             pointer-events: none;
             opacity: 0.5;

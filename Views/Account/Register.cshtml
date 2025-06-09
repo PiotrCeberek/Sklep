@@ -7,7 +7,7 @@
 
 <div class="d-flex justify-content-center align-items-center min-vh-100">
 	<div class="account-box bg-white p-4 rounded shadow" style="width: 100%; max-width: 400px;">
-		<h2 class="text-center mb-4">Register</h2>
+		<h2 class="text-center mb-4">Zarejestruj się</h2>
 		<form asp-action="Register" method="post">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -38,11 +38,11 @@
 			<input type="submit" value="Register" class="btn btn-success w-100 p-2" />
 
 			<p class="text-center mt-2">
-				Already have an account? <a asp-controller="Account" asp-action="Login" class="text-decoration-none">Login</a>
+				Masz już konto? <a asp-controller="Account" asp-action="Login" class="text-decoration-none">Zaloguj sie</a>
 			</p>
 
 			<div class="text-center">
-				<a asp-action="Index" asp-controller="Home" class="text-decoration-none mt-3">Back to home</a>
+				<a asp-action="Index" asp-controller="Home" class="text-decoration-none mt-3">Powrót do strony głównej</a>
 			</div>
 		</form>
 	</div>

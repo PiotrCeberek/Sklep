@@ -4,8 +4,8 @@ namespace Projekt.Models.ViewModels
 {
     public class ForgotPasswordModel
     {
-        [Required(ErrorMessage = "Email jest wymagany.")]
-        [EmailAddress]
+        [Required(ErrorMessage = "E-mail jest wymagany.")]
+        [EmailAddress(ErrorMessage = "Wprowadź poprawny adres e-mail.")]
         public string Email { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Projekt.Data;
+using System;
 
 namespace Projekt.Models.Services
 {
@@ -17,18 +18,9 @@ namespace Projekt.Models.Services
 
             try
             {
-                //ensure the database is created
-                logger.LogInformation("Ensuring the database is created.");
                 await context.Database.EnsureCreatedAsync();
-
-                //create roles
-                logger.LogInformation("Creating roles.");
                 await AddRoleAsync(roleManager, "Admin");
                 await AddRoleAsync(roleManager, "User");
-
-                //create users admin
-
-                logger.LogInformation("Sending admin user.");
                 var adminEmial = "admin@wp.pl";
                 if (await userManager.FindByEmailAsync(adminEmial) == null)
                 {
@@ -47,12 +39,12 @@ namespace Projekt.Models.Services
                     var result = await userManager.CreateAsync(admin, "Admin@123!");
                     if (result.Succeeded)
                     {
-                        logger.LogInformation("Admin user created.");
+                        logger.LogInformation("Stworzono konto administratora!.");
                         await userManager.AddToRoleAsync(admin, "Admin");
                     }
                     else
                     {
-                        logger.LogError("Admin user not created.");
+                        logger.LogError("Błąd podczas tworzenia konta administratora.");
                         foreach (var error in result.Errors)
                         {
                             logger.LogError(error.Description);
@@ -61,13 +53,13 @@ namespace Projekt.Models.Services
                 }
                 else
                 {
-                    logger.LogInformation("Admin user already exists.");
+                    logger.LogInformation("Administrator już istnieje.");
                 }
 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred seeding the database.");
+                logger.LogError(ex, "Wystąpił błąd podczas inicjalizacji bazy danych.");
             }
         }
 
@@ -76,10 +68,6 @@ namespace Projekt.Models.Services
                 if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     var result = await roleManager.CreateAsync(new IdentityRole(roleName));
-                    if(!result.Succeeded)
-                    {
-                        throw new Exception($"An error occurred creating the {roleName} role: {string.Join(", ", result.Errors.Select(e =>e.Description))}");
-                    }
                 }
             }
     }

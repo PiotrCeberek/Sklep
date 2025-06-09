@@ -21,16 +21,44 @@ namespace Projekt.Controllers
 
         public IActionResult Index(int? categoryId)
         {
-            var products = _context.Products
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var productsQuery = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Promotions)
+                .Where(p => p.Quantity > 0)
                 .AsQueryable();
 
             if (categoryId.HasValue)
             {
-                products = products.Where(p => p.CategoryId == categoryId.Value);
+                productsQuery = productsQuery.Where(p => p.CategoryId == categoryId.Value);
             }
 
+            var products = productsQuery.ToList();
+
+            var cartItems = new List<CartItem>();
+            if (userId != null)
+            {
+                cartItems = _context.CartItems
+                    .Where(c => c.UserId == userId)
+                    .ToList();
+            }
+
+            var dostepneIlosci = products.ToDictionary(
+                product => product.ProductId,
+                product =>
+                {
+                    var wKoszyku = cartItems
+                        .Where(c => c.ProductId == product.ProductId)
+                        .Select(c => c.Quantity)
+                        .FirstOrDefault();
+
+                    return product.Quantity - wKoszyku;
+                });
+
+            ViewBag.DostepneIlosci = dostepneIlosci;
+
+            var categories = _context.Categories.ToList();
             var currentDate = DateTime.Now;
             var discountedProducts = _context.Products
                 .Include(p => p.Category)
@@ -38,21 +66,22 @@ namespace Projekt.Controllers
                 .Where(p => p.Promotions.Any(prom => prom.StartDateTime <= currentDate && prom.EndDateTime >= currentDate))
                 .ToList();
 
-            var categories = _context.Categories.ToList();
             ViewData["Categories"] = categories;
             ViewData["DiscountedProducts"] = discountedProducts;
             ViewData["SelectedCategoryId"] = categoryId;
+
             UpdateCartCount();
             UpdateFavoritesCount();
 
             string waluta = HttpContext.Session.GetString("WybranaWaluta");
             decimal mnoznik = decimal.Parse(HttpContext.Session.GetString("Mnoznik"));
-
             ViewBag.Mnoznik = mnoznik;
             ViewBag.Waluta = waluta;
 
-            return View(products.ToList());
+            return View(products);
         }
+
+
 
         public IActionResult CategoryProducts(int categoryId)
         {
@@ -140,7 +169,7 @@ namespace Projekt.Controllers
 
             if (!string.IsNullOrEmpty(znizkaString) && decimal.TryParse(znizkaString, out decimal wynik))
             {
-                znizka = wynik / 100m; // np. 10% -> 0.10
+                znizka = wynik / 100m;
 
 
             }
@@ -194,6 +223,7 @@ namespace Projekt.Controllers
             var products = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Promotions)
+                .Where(p => p.Quantity > 0)
                 .ToList();
 
             UpdateCartCount();
@@ -301,7 +331,7 @@ namespace Projekt.Controllers
             if (userId == null) return Unauthorized();
 
             var cartItem = _context.CartItems
-                .FirstOrDefault(c => c.UserId == userId && c.CartItemId == id); // Szukaj po CartItemId!
+                .FirstOrDefault(c => c.UserId == userId && c.CartItemId == id);
 
             if (cartItem != null)
             {

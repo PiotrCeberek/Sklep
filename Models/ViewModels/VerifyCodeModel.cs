@@ -4,7 +4,7 @@ namespace Projekt.Models.ViewModels
 {
     public class VerifyCodeModel
     {
-        [Required(ErrorMessage = "Email jest wymagany.")]
+        [Required(ErrorMessage = "E-mail jest wymagany.")]
         [EmailAddress]
         public string Email { get; set; }
 

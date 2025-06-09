@@ -162,7 +162,6 @@ namespace Projekt.Controllers
 
             ViewBag.TymCarts = tymCarts;
 
-            // Pobranie ulgi (zniżki) z sesji
             var ulgaString = HttpContext.Session.GetString($"Ulga{order.OrderId}");
             double znizkaProcent = 0;
             if (!string.IsNullOrEmpty(ulgaString) && double.TryParse(ulgaString, out double parsedZnizka))

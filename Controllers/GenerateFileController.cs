@@ -18,7 +18,6 @@ namespace Projekt.Controllers
         public IActionResult Index(int nrZamowienia)
         {
             QuestPDF.Settings.License = LicenseType.Community;
-            //var model = _context.Orders.OrderByDescending(p => p.OrderId).FirstOrDefault();
 
             var model = _context.Orders
             .Include(o => o.User)

@@ -4,7 +4,7 @@ namespace Projekt.Models.ViewModels
 {
     public class ResetPasswordModel
     {
-        public string UserId { get; set; } // Przekazywane z VerifyCode
+        public string UserId { get; set; }
 
         [Required(ErrorMessage = "Pole jest wymagane")]
         [StringLength(40, MinimumLength = 6, ErrorMessage = "Hasło musi mieć od {2} do {1} znaków")]

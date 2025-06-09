@@ -44,7 +44,7 @@ namespace Projekt.Models.Email
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Błąd podczas wysyłania emaila do {To}", to);
-                throw; // Rzucamy wyjątek, aby kontroler mógł go obsłużyć
+                throw;
             }
         }
     }

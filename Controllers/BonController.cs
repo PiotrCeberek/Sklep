@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Projekt.Data;
 using Projekt.Models;
@@ -17,6 +18,7 @@ namespace Projekt.Controllers
             _context = context;
             _userManager = userManager;
         }
+        [Authorize]
         public IActionResult GenerujBon()
         {
             var userId = _userManager.GetUserId(User);
@@ -47,7 +49,7 @@ namespace Projekt.Controllers
 
             return RedirectToAction("PokazBony");
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult PokazBony()
         {
@@ -64,8 +66,8 @@ namespace Projekt.Controllers
                 .Where(b => b.UserId == userId)
                 .ToList();
 
-            ViewBag.UserId = userId;            // <-- dodaj to
-            ViewBag.TimerSeconds = 300;         // <-- 5 minut w sekundach
+            ViewBag.UserId = userId;
+            ViewBag.TimerSeconds = 300;
 
             return View(bony);
         }

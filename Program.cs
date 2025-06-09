@@ -1,7 +1,9 @@
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.OpenApi.Models;
@@ -55,6 +57,15 @@ namespace Projekt
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient<ApiService>();
             var app = builder.Build();
+
+            var supportedCultures = new[] { new CultureInfo("pl-PL"), new CultureInfo("en-US") };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("pl-PL"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
 
             if (app.Environment.IsDevelopment())
             {

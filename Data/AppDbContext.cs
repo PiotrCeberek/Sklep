@@ -137,7 +137,7 @@ namespace Projekt.Data
 
             modelBuilder.Entity<Bon>()
                 .HasOne(b => b.User)
-                .WithMany() // brak kolekcji w Users
+                .WithMany()
                 .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 

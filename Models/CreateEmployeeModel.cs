@@ -4,16 +4,16 @@ namespace Projekt.Models
 {
     public class CreateEmployeeModel
     {
-        [Required]
+        [Required(ErrorMessage = "Imię i nazwisko jest wymagane.")]
         [Display(Name = "Imię i nazwisko")]
         public string Name { get; set; }
 
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Email jest wymagany.")]
+        [EmailAddress(ErrorMessage = "Nieprawidłowy format adresu email.")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hasło jest wymagane.")]
         [DataType(DataType.Password)]
         [Display(Name = "Hasło")]
         public string Password { get; set; }

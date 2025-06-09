@@ -47,7 +47,7 @@ namespace Projekt.Controllers
                 {
                     if (imageFile.FileName.Length > 100)
                     {
-                        ModelState.AddModelError("imageFile", "The file name is too long. Please use a shorter file name (max 100 characters).");
+                        ModelState.AddModelError("imageFile", "Za długa nazwa zdjęcia (max 100 znaków)");
                         return View(category);
                     }
 
@@ -74,8 +74,8 @@ namespace Projekt.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating category.");
-                ModelState.AddModelError("", "An error occurred while creating the category. Please try again.");
+                _logger.LogError(ex, "Błąd podczas tworzenia kategorii.");
+                ModelState.AddModelError("", "Błąd podczas tworzenia kategorii. Spróbuj ponownie.");
                 return View(category);
             }
         }
@@ -117,7 +117,7 @@ namespace Projekt.Controllers
                 {
                     if (imageFile.FileName.Length > 100)
                     {
-                        ModelState.AddModelError("imageFile", "The file name is too long. Please use a shorter file name (max 100 characters).");
+                        ModelState.AddModelError("imageFile", "Za długa nazwa zdjęcia (max 100 znaków)");
                         return View(category);
                     }
 
@@ -154,8 +154,8 @@ namespace Projekt.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while updating category with ID {CategoryId}.", id);
-                ModelState.AddModelError("", "An error occurred while updating the category. Please try again.");
+                _logger.LogError(ex, "Błąd przy zmienianiu ID kategorii.", id);
+                ModelState.AddModelError("", "Błąd podczas tworzenia kategorii. Spróbuj ponownie.");
                 return View(category);
             }
         }
@@ -185,7 +185,7 @@ namespace Projekt.Controllers
 
             if (category.Products != null && category.Products.Any())
             {
-                TempData["ErrorMessage"] = "Cannot delete this category because it has associated products. Please remove the products first.";
+                TempData["ErrorMessage"] = "Nie można usunąć tej kategorii, ponieważ posiada powiązane produkty. Najpierw usuń produkty.";
                 return RedirectToAction(nameof(Categories));
             }
 
@@ -202,13 +202,13 @@ namespace Projekt.Controllers
 
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Category deleted successfully.";
+                TempData["SuccessMessage"] = "Pomyślnie usunięto kategorię.";
                 return RedirectToAction(nameof(Categories));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while deleting category with ID {CategoryId}.", id);
-                TempData["ErrorMessage"] = "An error occurred while deleting the category. Please try again.";
+                _logger.LogError(ex, "Błąd przy zmienianiu ID kategorii.", id);
+                TempData["ErrorMessage"] = "Błąd podczas tworzenia kategorii. Spróbuj ponownie.";
                 return RedirectToAction(nameof(Categories));
             }
         }

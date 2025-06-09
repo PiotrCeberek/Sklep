@@ -1,10 +1,10 @@
 ﻿@model Projekt.Models.Promotion
 
 @{
-    ViewData["Title"] = "Add Promotion";
+    ViewData["Title"] = "Dodaj promocję";
 }
 
-<h1>Add New Promotion</h1>
+<h1>Dodaj nową promocję</h1>
 
 <form asp-action="AddPromotion" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -12,7 +12,7 @@
     <div class="form-group">
         <label asp-for="ProductId" class="control-label"></label>
         <select asp-for="ProductId" class="form-control" asp-items="@(new SelectList(ViewBag.Products, "ProductId", "Name"))">
-            <option value="">Select a product</option>
+            <option value="">Wybierz produkt</option>
         </select>
         <span asp-validation-for="ProductId" class="text-danger"></span>
     </div>
@@ -26,7 +26,7 @@
     <div class="form-group">
         <label asp-for="Discount" class="control-label"></label>
         <input asp-for="Discount" class="form-control" />
-        <small class="form-text text-muted">Enter discount as a percentage (e.g., 20 for 20%)</small>
+        <small class="form-text text-muted">Wprowadź procentową wartość zniżki</small>
         <span asp-validation-for="Discount" class="text-danger"></span>
     </div>
 

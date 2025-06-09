@@ -28,7 +28,6 @@ namespace Projekt.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder(string BonKod)
         {
-            // Usuwamy ewentualnie stary BonKod z sesji
             HttpContext.Session.SetString("Znizka", "0");
             HttpContext.Session.Remove("BonKod");
 
@@ -101,9 +100,6 @@ namespace Projekt.Controllers
 
             await _context.SaveChangesAsync();
 
-
-
-            // Załaduj nawigację (User)
             await _context.Entry(order).Reference(o => o.User).LoadAsync();
 
             var employees = await _context.Users
@@ -174,14 +170,10 @@ namespace Projekt.Controllers
             }
             await _context.SaveChangesAsync();
 
-            Console.WriteLine("11111\n\n\n\n\n");
-            // *** TUTAJ DODAJEMY OBSŁUGĘ BONU ***
             if (!string.IsNullOrEmpty(BonKod))
             {
-                Console.WriteLine("probuj1\n\n\n\n\n");
                 var bon = await _context.Bony.FirstOrDefaultAsync(b => b.Kod == BonKod);
                 if (bon != null)
-                    Console.WriteLine("probuje2\n\n\n\n\n");
                 {
                     double znizkaProcent = bon.ProcentZnizki;
                     HttpContext.Session.SetString($"Ulga{order.OrderId}", znizkaProcent.ToString());
@@ -212,7 +204,6 @@ namespace Projekt.Controllers
                 return NotFound();
             }
 
-            // Odczyt ulgi ze session (klucz "Ulga{orderId}")
             string znizkaString = HttpContext.Session.GetString($"Ulga{orderId}");
             decimal znizka = 0m;
             if (!string.IsNullOrEmpty(znizkaString))
@@ -257,7 +248,6 @@ namespace Projekt.Controllers
 
             ViewBag.TymCarts = tymCarts;
 
-            // Dodanie słownika zniżek
             var znizki = new Dictionary<int, double>();
             foreach (var h in history)
             {
@@ -296,7 +286,6 @@ namespace Projekt.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Pobranie zniżki z Session (domyślnie 0%)
             var znizkaStr = HttpContext.Session.GetString("Znizka");
             decimal znizka = 0;
             if (!string.IsNullOrEmpty(znizkaStr))
@@ -304,7 +293,6 @@ namespace Projekt.Controllers
                 decimal.TryParse(znizkaStr, out znizka);
             }
 
-            // Oblicz tymczasowe kwoty po zastosowaniu zniżki
             var cartItemsWithDiscount = cartItems.Select(ci => new
             {
                 Produkt = ci.Product,

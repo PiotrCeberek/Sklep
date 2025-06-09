@@ -7,12 +7,15 @@ namespace Projekt.Models
     {
         [Key]
         public int FavoriteId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Pole Użytkownik jest wymagane.")]
         [ForeignKey("User")]
         public string UserId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Pole Produkt jest wymagane.")]
         [ForeignKey("Product")]
         public int ProductId { get; set; }
+
         public Users? User { get; set; }
         public Product? Product { get; set; }
     }

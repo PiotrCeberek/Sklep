@@ -12,7 +12,6 @@
 <h1>Powiadomienia</h1>
     <tbody>
         <div class="row">
-            <!-- Niezrealizowane -->
             <div class="col-md-6">
                 <h3>Niezrealizowane</h3>
                 <table class="table">
@@ -38,7 +37,6 @@
                 </table>
             </div>
 
-            <!-- Zrealizowane -->
             <div class="col-md-6">
                 <h3>Zrealizowane</h3>
                 <table class="table">
@@ -56,7 +54,7 @@
                                 <td>@notification.Message</td>
                                 <td>@notification.CreatedAt.ToString("g")</td>
                                 <td>
-                                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Info</a>
+                                    <a asp-action="ProcessOrder" asp-route-orderId="@notification.OrderId" class="btn btn-primary">Informacje</a>
                                 </td>
                             </tr>
                         }

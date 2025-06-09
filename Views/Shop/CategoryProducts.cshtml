@@ -28,7 +28,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text">
-                        Price: @(Math.Round(@displayPrice / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
+                        Cena: @(Math.Round(@displayPrice / @ViewBag.Mnoznik, 2)) @ViewBag.Waluta<br />
                         @if (activePromotion != null)
                         {
                             <span class="text-muted text-decoration-line-through">
@@ -43,10 +43,10 @@
                     <form asp-action="AddToCart" method="post" class="d-inline">
                         <input type="hidden" name="productId" value="@product.ProductId" />
                         <div class="form-group">
-                            <label>Quantity:</label>
+                            <label>Ilość:</label>
                             <input type="number" name="quantity" value="1" min="1" max="@product.Quantity" class="form-control w-50 d-inline" />
                         </div>
-                        <button type="submit" class="btn btn-primary mt-2">Add to Cart</button>
+                        <button type="submit" class="btn btn-primary mt-2">Dodaj do koszyka</button>
                     </form>
                     <form asp-action="AddToFavorites" method="post" class="d-inline">
                         <input type="hidden" name="productId" value="@product.ProductId" />
